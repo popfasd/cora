@@ -305,7 +305,7 @@ cora.Controller = {
 			for (var i=0; i<students.length; i++)
 			{
 				var s = students[i];
-				html += '<li><a href="#student?id='+s.id+'">'+
+				html += '<li><a href="#student?sid='+s.id+'">'+
 					s.lastName+', '+s.firstName+'</a></li>';
 			}
 			$('#home div[data-role="content"] > ul').html(html);
@@ -321,13 +321,13 @@ cora.Controller = {
 		// Reset form fields
 		$('#student-form-form input').attr('value', '');
 		$('#student-form-form label').removeClass('form-validation-error');
-		var sid;
+		var studentId;
 		if (match.length > 1)
 		{
 			var params = cora.Router.getParams(match[1]);
-			sid = params.sid;
+			studentId = params.sid;
 		}
-		if (typeof sid === 'undefined' || sid === '')
+		if (typeof studentId === 'undefined' || studentId === '')
 		{
 			// new student
 			$('#student-form h1').html('Add student');
@@ -336,7 +336,7 @@ cora.Controller = {
 		{
 			// editing student
 			$('#student-form h1').html('Edit student');
-			cora.getStudentById(sid, function (student) {
+			cora.getStudentById(studentId, function (student) {
 				if (student !== null)
 				{
 					$('#student-form-student-id').attr('value', student.id);
@@ -371,7 +371,7 @@ cora.Controller = {
 					student.firstName = firstName;
 					student.lastName = lastName;
 					persistence.flush(function () {
-						$.mobile.changePage('#student?id='+student.id, {
+						$.mobile.changePage('#student?sid='+student.id, {
 							reverse: true,
 							changeHash: false
 						});
@@ -382,7 +382,7 @@ cora.Controller = {
 			{
 				var student = cora.createStudent(firstName, lastName);
 				persistence.flush(function () {
-					$.mobile.changePage('#student?id='+student.id, {
+					$.mobile.changePage('#student?sid='+student.id, {
 						reverse: true,
 						changeHash: false
 					});
@@ -410,10 +410,10 @@ cora.Controller = {
 		$('#student-button-delete').click(cora.Controller.onDeleteStudent);
 		// reset content
 		$('#student div[data-role="content"] ul').empty();
-		var id = cora.Router.getParams(match[1]).id;
-		if (typeof id !== 'undefined')
+		var studentId = cora.Router.getParams(match[1]).sid;
+		if (typeof studentId !== 'undefined')
 		{
-			cora.getStudentById(id, function (student) {
+			cora.getStudentById(studentId, function (student) {
 				if (student !== null)
 				{
 					$('#student').attr('data-cora-student-id', student.id);
@@ -483,10 +483,10 @@ cora.Controller = {
 	 */
 	onDeleteStudent: function ()
 	{console.log('cora: onDeleteStudent');
-		var sid = $('#student').attr('data-cora-student-id');
-		if (typeof sid !== 'undefined' && sid != '')
+		var studentId = $('#student').attr('data-cora-student-id');
+		if (typeof studentId !== 'undefined' && studentId != '')
 		{
-			cora.getStudentById(sid, function (student) {
+			cora.getStudentById(studentId, function (student) {
 				if (student !== null)
 				{
 					$('#dialog-confirm-delete-button-delete').click(function () {
@@ -503,7 +503,7 @@ cora.Controller = {
 						});
 					});
 					$('#dialog-confirm-delete-button-cancel').attr('href',
-						'#student?id='+student.id
+						'#student?sid='+student.id
 					);
 					$.mobile.changePage('#dialog-confirm-delete', {
 						transition: 'pop',
@@ -533,20 +533,20 @@ cora.Controller = {
 		$('#note-content').val('');
 		$('#note-form-form label').removeClass('form-validation-error');
 		var params = cora.Router.getParams(match[1]);
-		var nid = params.nid;
-		if (typeof nid === 'undefined' || nid === '')
+		var noteId = params.nid;
+		if (typeof noteId === 'undefined' || noteId === '')
 		{
 			/*
 			 * We're adding a new note
 			 */
 			$('#note-form h1').html('Add note');
-			var sid = params.sid;
-			if (typeof sid !== 'undefined' && sid !== '')
+			var studentId = params.sid;
+			if (typeof studentId !== 'undefined' && studentId !== '')
 			{
 				/*
 				 * A student was specified, so retrieve and load into the form
 				 */
-				cora.getStudentById(sid, function (student) {
+				cora.getStudentById(studentId, function (student) {
 					if (student !== null)
 					{
 						$('#note-form h1').html(
@@ -579,7 +579,7 @@ cora.Controller = {
 			 * We're editing a note
 			 */
 			$('#note-form h1').html('Edit note');
-			cora.getNoteById(nid, function (note) {
+			cora.getNoteById(noteId, function (note) {
 				if (note !== null)
 				{
 					note.fetch('student', function (student) {
@@ -735,7 +735,7 @@ cora.Controller = {
 								}
 							}
 							cora.persistence.flush(function () {
-								$.mobile.changePage('#student?id='+student.id,{reverse: true});
+								$.mobile.changePage('#student?sid='+student.id,{reverse: true});
 							});
 						});
 					}
@@ -765,12 +765,12 @@ cora.Controller = {
 	{console.log('cora: onBeforeShowNote');
 		$('#note-button-delete').click(cora.Controller.onDeleteNote);
 		var params = cora.Router.getParams(match[1]);
-		var sid = params.sid;
-		var nid = params.nid;
-		var student = cora.EntityCache.get(sid);
-		if (typeof nid !== 'undefined' && nid !== '')
+		var studentId = params.sid;
+		var noteId = params.nid;
+		var student = cora.EntityCache.get(studentId);
+		if (typeof noteId !== 'undefined' && noteId !== '')
 		{
-			cora.getNoteById(nid, function (note) {
+			cora.getNoteById(noteId, function (note) {
 				if (note !== null)
 				{
 					$('#note').attr('data-cora-note-id', note.id);
@@ -787,7 +787,7 @@ cora.Controller = {
 						$('#note p.note-tags').html('Tags: '+taglist.join(', '));
 					});
 					$('#note p.note-content').html(note.content);
-					$('#note-button-edit').attr('href', '#note-form?nid='+nid);
+					$('#note-button-edit').attr('href', '#note-form?nid='+noteId);
 				}
 				else
 				{
@@ -813,10 +813,10 @@ cora.Controller = {
 	 */
 	onDeleteNote: function ()
 	{console.log('cora: onDeleteNote');
-		var nid = $('#note').attr('data-cora-note-id');
-		if (typeof nid !== 'undefined' && nid != '')
+		var noteId = $('#note').attr('data-cora-note-id');
+		if (typeof noteId !== 'undefined' && noteId != '')
 		{
-			cora.getNoteById(nid, function (note) {
+			cora.getNoteById(noteId, function (note) {
 				if (note !== null)
 				{
 					$('#dialog-confirm-delete-button-delete').click(function () {
@@ -830,7 +830,7 @@ cora.Controller = {
 						});
 					});
 					$('#dialog-confirm-delete-button-cancel').attr('href',
-						'#note?nid='+student.id
+						'#note?nid='+note.id
 					);
 					$.mobile.changePage('#dialog-confirm-delete', {
 						transition: 'pop',

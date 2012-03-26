@@ -19,9 +19,6 @@
 		- ensure all nav is consistent
 			- home button always appears in the top left corner
 			- add buttons always appear in the top right corner
-		- tidy up use of id/sid/nid
-			- student ids should use sid
-			- note ids should use nid
 		- onDelete events where the entity id returns null should provide an error dialog
 			- currently, just silently transition to #home
 		- copyright credit and license at top of all original files
