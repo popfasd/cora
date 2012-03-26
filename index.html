@@ -21,11 +21,11 @@
 	<body>
 	
 		<!-- HOME -->
-		<div data-role="page" id="home">
+		<div id="home" data-role="page">
 			<div data-role="header">
 				<h1>Students</h1>
-				<a href="#options" data-icon="gear" data-transition="flip" data-iconpos="notext" class="ui-btn-left">Options</a>
-				<a id="student-button" href="#student-form" data-icon="plus" data-direction="forward" data-iconpos="notext" class="ui-btn-right">Add Student</a>
+				<a class="ui-btn-left" href="#options" data-icon="gear" data-transition="flip" data-iconpos="notext">Options</a>
+				<a id="student-button" class="ui-btn-right" data-icon="plus" data-direction="forward" data-iconpos="notext" href="#student-form">Add Student</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<ul data-role="listview" data-filter="true">
@@ -35,21 +35,21 @@
 		<!-- /HOME -->
 
 		<!-- STUDENT FORM -->
-		<div data-role="page" id="student-form">
+		<div id="student-form" data-role="page">
 			<div data-role="header">
 				<h1>Add/Edit Student</h1>
-				<a href="#home" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left">Home</a>
+				<a class="ui-btn-left" data-icon="home" data-iconpos="notext" data-direction="reverse" href="#home">Home</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<form id="student-form-form" action="#student-form" method="post">
-					<input type="hidden" id="student-form-student-id" name="student" />
+					<input id="student-form-student-id" type="hidden" name="student" />
 					<label id="student-form-firstname-label" for="firstName">First name</label>
-					<input type="text" id="student-form-firstname" name="firstName" />
+					<input id="student-form-firstname" type="text" name="firstName" />
 					<label id="student-form-lastname-label" for="lastName">Last name</label>
-					<input type="text" id="student-form-lastname" name="lastName" />
+					<input id="student-form-lastname" type="text" name="lastName" />
 					<div class="ui-grid-a">
-						<div class="ui-block-a"><a href="javascript:history.back();" data-role="button" data-direction="reverse">Cancel</a></div>
-						<div class="ui-block-b"><input type="submit" value="Save" class="ui-block-b" /></div>
+						<div class="ui-block-a"><a data-role="button" data-direction="reverse" href="javascript:history.back();">Cancel</a></div>
+						<div class="ui-block-b"><input class="ui-block-b" type="submit" value="Save" /></div>
 					</div><!-- /ui-grid-a -->
 				</form>
 			</div><!-- /content -->
@@ -57,42 +57,42 @@
 		<!-- /STUDENT FORM -->
 		
 		<!-- STUDENT -->
-		<div data-role="page" id="student">
+		<div id="student" data-role="page">
 			<div data-role="header">
 				<h1>Student</h1>
-				<a href="#home" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left">Home</a>
-				<a id="note-button" href="#note-form" data-icon="plus" data-direction="forward" data-iconpos="notext" class="ui-btn-right">Add Note</a>
+				<a class="ui-btn-left" data-icon="home" data-iconpos="notext" data-direction="reverse" href="#home">Home</a>
+				<a id="note-button" class="ui-btn-right" data-icon="plus" data-direction="forward" data-iconpos="notext" href="#note-form">Add Note</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<div id="student-notes">
 				</div>
 				<div class="ui-grid-a">
-					<div class="ui-block-a"><a id="student-button-edit" href="#student-form" data-role="button" direction="forward">Edit</a></div>
-					<div class="ui-block-b"><a id="student-button-delete" href="#" data-role="button">Delete</a></div>
+					<div class="ui-block-a"><a id="student-button-edit" data-role="button" direction="forward" href="#student-form">Edit</a></div>
+					<div class="ui-block-b"><a id="student-button-delete" data-role="button" href="#">Delete</a></div>
 				</div>
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /STUDENT -->
 		
 		<!-- NOTE FORM -->
-		<div data-role="page" id="note-form">
-			<div data-role="header" data-position="fixed">
+		<div id="note-form" data-role="page">
+			<div data-role="header">
 				<h1>Add/Edit Note</h1>
-				<a href="#home" data-icon="home" data-direction="reverse" data-iconpos="notext" class="ui-btn-left">Home</a>
+				<a class="ui-btn-left" data-icon="home" data-iconpos="notext" data-direction="reverse" href="#home">Home</a>
 			</div>
 			<div data-role="content">
-				<form id="note-form-form" action="#note-form" method="post" data-direction="reverse">
-					<input type="hidden" id="note-form-note-id" name="note-id" />
-					<input type="hidden" id="note-form-student-id" name="student-id" />
+				<form id="note-form-form" data-direction="reverse" action="#note-form" method="post">
+					<input id="note-form-note-id" type="hidden" name="note-id" />
+					<input id="note-form-student-id" type="hidden" name="student-id" />
 					<label id="note-form-student-name-label" for="studentName">Student's name</label>
-					<input type="text" id="note-form-student-name" name="studentName" />
+					<input id="note-form-student-name" type="text" name="studentName" />
 					<label id="note-form-tags-label" for="tags">Tags (optional)</label>
-					<input type="text" id="note-form-tags" name="tags" />
+					<input id="note-form-tags" type="text" name="tags" />
 					<label id="note-form-content-label" for="content">Note</label>
-					<textarea id="note-form-content" name="content" ></textarea>
+					<textarea id="note-form-content" name="content"></textarea>
 					<div class="ui-grid-a">
-						<div class="ui-block-a"><a href="javascript:history.back();" data-role="button" data-direction="reverse">Cancel</a></div>
-						<div class="ui-block-b"><input type="submit" value="Save" class="ui-block-b" /></div>
+						<div class="ui-block-a"><a data-role="button" data-direction="reverse" href="javascript:history.back();">Cancel</a></div>
+						<div class="ui-block-b"><input type="submit" value="Save" /></div>
 					</div><!-- /ui-grid-a -->
 				</form>
 			</div><!-- /content -->
@@ -100,10 +100,10 @@
 		<!-- /NOTE FORM -->
 		
 		<!-- NOTE -->
-		<div data-role="page" id="note">
-			<div data-role="header" data-position="fixed">
+		<div id="note" data-role="page">
+			<div data-role="header">
 				<h1>View Note</h1>
-				<a id="note-back-button" href="javascript:history.back();" data-iconpos="notext" data-icon="back" data-direction="reverse" class="ui-btn-left">Back</a>
+				<a id="note-back-button" class="ui-btn-left" data-icon="back" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Back</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<p class="note-student"></p>
@@ -111,18 +111,18 @@
 				<p class="note-tags"></p>
 				<p class="note-content"></p>
 				<div class="ui-grid-a">
-					<div class="ui-block-a"><a id="note-button-edit" href="#note-form" data-role="button" direction="forward">Edit</a></div>
-					<div class="ui-block-b"><a id="note-button-delete" href="#" data-role="button">Delete</a></div>
+					<div class="ui-block-a"><a id="note-button-edit" data-role="button" direction="forward" href="#note-form">Edit</a></div>
+					<div class="ui-block-b"><a id="note-button-delete" data-role="button" href="#">Delete</a></div>
 				</div>
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /NOTE -->
 
 		<!-- OPTIONS -->
-		<div data-role="page" id="options">
-			<div data-role="header" data-position="fixed">
+		<div id="options" data-role="page">
+			<div data-role="header">
 				<h1>Options</h1>
-				<a href="#home" data-icon="home" data-iconpos="notext" data-transition="flip" data-direction="reverse" class="ui-btn-left">Home</a>
+				<a class="ui-btn-left" data-icon="home" data-iconpos="notext" data-direction="reverse" data-transition="flip" href="#home">Home</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<ul data-role="listview">
@@ -135,23 +135,23 @@
 		<!-- /OPTIONS -->
 
 		<!-- OPTIONS EXPORT -->
-		<div data-role="page" id="options-export">
-			<div data-role="header" data-position="fixed">
+		<div id="options-export" data-role="page">
+			<div data-role="header">
 				<h1>Export Notes</h1>
-				<a href="javascript:history.back();" data-icon="back" data-direction="reverse" data-iconpos="notext" class="ui-btn-left">Options</a>
+				<a class="ui-btn-left" data-icon="back" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<form>
 					<fieldset data-role="controlgroup">
 						<legend>Export as</legend>
-						<input type="radio" id="format-csv" name="format" value="csv" checked="checked" />
+						<input id="options-export-form-format-csv" type="radio" name="format" value="csv" checked="checked" />
 						<label for="format-csv">CSV</label>
-						<input type="radio" id="format-zip" name="format" value="zip" />
+						<input id="options-export-form-format-zip" type="radio" name="format" value="zip" />
 						<label for="format-zip">ZIP</label>
 					</fieldset>
 					<div>
 						<label for="email">Email address</label>
-						<input type="text" id="email" name="email" />
+						<input id="options-export-form-email" type="text" name="email" />
 					</div>
 					<div>
 						<input type="submit" value="Export" />
@@ -162,10 +162,10 @@
 		<!-- /OPTIONS EXPORT -->
 
 		<!-- OPTIONS ABOUT -->
-		<div data-role="page" id="options-about">
-			<div data-role="header" data-position="fixed">
+		<div id="options-about" data-role="page">
+			<div data-role="header">
 				<h1>About Cora</h1>
-				<a href="javascript:history.back();" data-icon="back" data-iconpos="notext" data-direction="reverse" class="ui-btn-left">Options</a>
+				<a class="ui-btn-left" data-icon="back" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<div id="logo"><img src="assets/images/logo.png" /></div>
@@ -177,35 +177,35 @@
 		<!-- /OPTIONS ABOUT -->
 		
 		<!-- DIALOGS -->
-		<div data-role="dialog" data-rel="dialog" data-transition="pop" id="dialog-no-object-specified">
+		<div id="dialog-no-object-specified" data-role="dialog" data-rel="dialog" data-transition="pop">
 			<div data-role="header">
 				<h1>Uh oh!</h1>
 			</div><!-- /header -->
 			<div data-role="content">
 				<p>I don't have anything to display because I haven't been told what you would like to view.</p>
 				<p>(0001)</p>
-				<p><a href="#home" data-role="button">Close</a></p>
+				<p><a data-role="button" href="#home">Close</a></p>
 			</div><!-- /content -->
 		</div>
-		<div data-role="dialog" data-rel="dialog" data-transition="pop" id="dialog-object-doesnt-exist">
+		<div id="dialog-object-doesnt-exist" data-role="dialog" data-rel="dialog" data-transition="pop">
 			<div data-role="header">
 				<h1>Uh oh!</h1>
 			</div><!-- /header -->
 			<div data-role="content">
 				<p>The object you've requested doesn't appear to exist!</p>
 				<p>(0002)</p>
-				<p><a href="#home" data-role="button">Close</a></p>
+				<p><a data-role="button" href="#home">Close</a></p>
 			</div><!-- /content -->
 		</div>
-		<div data-role="dialog" data-rel="dialog" data-transition="pop" id="dialog-confirm-delete">
+		<div id="dialog-confirm-delete" data-role="dialog" data-rel="dialog" data-transition="pop">
 			<div data-role="header">
 				<h1>Are you sure?</h1>
 			</div><!-- /header -->
 			<div data-role="content">
 				<p>Are you sure you want to delete? This action cannot be undone.</p>
 				<div class="ui-grid-a">
-					<div class="ui-block-a"><a id="dialog-confirm-delete-button-delete" href="#" data-role="button">Delete</a></p></div>
-					<div class="ui-block-b"><a id="dialog-confirm-delete-button-cancel" href="#" data-role="button">Cancel</a></p></div>
+					<div class="ui-block-a"><a id="dialog-confirm-delete-button-delete" data-role="button" href="#">Delete</a></p></div>
+					<div class="ui-block-b"><a id="dialog-confirm-delete-button-cancel" data-role="button" href="#">Cancel</a></p></div>
 				</div>
 			</div><!-- /content -->
 		</div>
