@@ -14,8 +14,6 @@
 	HOUSEKEEPING
 		- markup object methods with jsdoc tags (http://code.google.com/p/jsdoc-toolkit/w/list)
 		- all interface text needs to be abstracted to cora.Lang.[message]
-		- consistent naming for ID's
-			- header links
 		- console.log = function () {};
 		- try and wrap db activity in transactions where possible (persistence.transaction())
 		- ensure all nav is consistent
