@@ -1,0 +1,41 @@
+PROJECT
+
+	- define project lifecycle
+		- release/version numbering
+			- major.minor.fix (1.2.3)
+		- fixes released after testing
+		- major/minor released to horizon (beta) first, once problems fixed, then released to stable
+		- nightly builds released to dark-side
+		- tightly define project specifications to avoid feature creep
+	- create a suite of unit tests to prevent regression
+	- support site
+		- detail included libraries and licenses
+		- downloads for non-ios devices
+		- link to appcache 'stable' build
+		- link to appcache 'horizon' (beta) build
+		- link to appcache 'dark-side' (nightly) build
+		- bug/feature tracker
+		- support forum
+		- blog with latest developments
+		- video tutorials
+	- should we open source?
+		- need to add copyright and licensing to all original files
+		- determine license
+		- if so, then host on github
+		- need to subscribe to updates for included libraries
+		- generate documentation
+		- code standards
+		- benefits
+			- as the original author, it's hard to objectively evaluate the code
+			- more eyes on the code means more objective evaluation
+			- opensource model promotes community
+			- means that the app can live on beyond POPFASD
+			- if I get hit by a bus, you'll possibly still have app development
+	- git repo
+		- master branch is production
+		- tag master branch for releases
+			- tag name major.minor[.fix]-[alpha|beta|stable]
+				- 1.0-stable, 1.1-beta, 1.0.1-stable
+		- all development happens on secondary branches and is merged back to master
+			- 1.0.1 development occures on new branch called 1.0.1
+				- merged back with master and tagged as 1.0.1-stable
