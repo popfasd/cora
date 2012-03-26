@@ -1,0 +1,58 @@
+/* 
+ * Forms
+ */
+
+input[type="text"],
+input[type="password"],
+select,
+textarea {
+	margin: 0 0 10px 0;
+}
+
+#note-form textarea {
+	height: 150px;
+}
+
+#options-about #logo,
+#options-about div[data-role="content"] {
+	max-width: 350px;
+	margin: auto;
+	text-align: justify;
+}
+
+#options-about #logo img {
+	width: 100%;
+	margin: auto;
+}
+
+div[data-role="content"] .message {
+	max-width: 320px;
+	margin: auto;
+}
+
+.form-validation-error {
+	color: #f00;
+	font-weight: bold;
+}
+
+#note p.note-student {
+	font-size: 1.2em;
+	font-weight: bold;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+#note p.note-created {
+	margin: 0;
+	padding: 0;
+}
+
+#note p.note-tags {
+	margin-top: 0;
+	padding-top: 0;
+	color: #888;
+}
+
+#student .ui-grid-a {
+	margin-top: 15px;
+}

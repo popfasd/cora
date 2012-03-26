@@ -1,0 +1,215 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<title>Cora</title>
+		<meta name="Content-Type" content="text/html" />
+		<meta name="Charset" content="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" type="text/css" href="assets/themes/jquery.mobile-1.0.1.min.css" />
+		<link rel="stylesheet" type="text/css" href="assets/themes/cora.min.css" />
+		<link rel="stylesheet" type="text/css" href="assets/css/main.css" />
+		<script type="text/javascript" src="assets/js/jquery-1.7.min.js"></script>
+		<script type="text/javascript" src="assets/js/jquery.mobile.router.min.js"></script>
+		<script type="text/javascript" src="assets/js/jquery.mobile-1.0.1.min.js"></script>
+		<script type="text/javascript" src="assets/js/persistence.js"></script>
+		<script type="text/javascript" src="assets/js/persistence.store.sql.js"></script>
+		<script type="text/javascript" src="assets/js/persistence.store.websql.js"></script>
+		<script type="text/javascript" src="assets/js/cora.js"></script>
+		<script>cora.initialize();</script>
+	</head>
+	<body>
+	
+		<!-- HOME -->
+		<div data-role="page" id="home">
+			<div data-role="header">
+				<h1>Students</h1>
+				<a href="#options" data-icon="gear" data-transition="flip" data-iconpos="notext" class="ui-btn-left">Options</a>
+				<a id="student-button" href="#student-form" data-icon="plus" data-direction="forward" data-iconpos="notext" class="ui-btn-right">Add Student</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<ul data-role="listview" data-filter="true">
+				</ul>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /HOME -->
+
+		<!-- STUDENT FORM -->
+		<div data-role="page" id="student-form">
+			<div data-role="header">
+				<h1>Add/Edit Student</h1>
+				<a href="#home" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left">Home</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<form id="student-form-form" action="#student-form" method="post">
+					<input type="hidden" id="student-form-student-id" name="student" />
+					<label id="student-form-firstname-label" for="firstName">First name</label>
+					<input type="text" id="student-form-firstname" name="firstName" />
+					<label id="student-form-lastname-label" for="lastName">Last name</label>
+					<input type="text" id="student-form-lastname" name="lastName" />
+					<div class="ui-grid-a">
+						<div class="ui-block-a"><a href="javascript:history.back();" data-role="button" data-direction="reverse">Cancel</a></div>
+						<div class="ui-block-b"><input type="submit" value="Save" class="ui-block-b" /></div>
+					</div><!-- /ui-grid-a -->
+				</form>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /STUDENT FORM -->
+		
+		<!-- STUDENT -->
+		<div data-role="page" id="student">
+			<div data-role="header">
+				<h1>Student</h1>
+				<a href="#home" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left">Home</a>
+				<a id="note-button" href="#note-form" data-icon="plus" data-direction="forward" data-iconpos="notext" class="ui-btn-right">Add Note</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<div id="student-notes">
+				</div>
+				<div class="ui-grid-a">
+					<div class="ui-block-a"><a id="student-button-edit" href="#student-form" data-role="button" direction="forward">Edit</a></div>
+					<div class="ui-block-b"><a id="student-button-delete" href="#" data-role="button">Delete</a></div>
+				</div>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /STUDENT -->
+		
+		<!-- NOTE FORM -->
+		<div data-role="page" id="note-form">
+			<div data-role="header" data-position="fixed">
+				<h1>Add/Edit Note</h1>
+				<a href="#home" data-icon="home" data-direction="reverse" data-iconpos="notext" class="ui-btn-left">Home</a>
+			</div>
+			<div data-role="content">
+				<form id="note-form-form" action="#note-form" method="post" data-direction="reverse">
+					<input type="hidden" id="note-form-note-id" name="note-id" />
+					<input type="hidden" id="note-form-student-id" name="student-id" />
+					<label id="note-form-student-name-label" for="studentName">Student's name</label>
+					<input type="text" id="note-form-student-name" name="studentName" />
+					<label id="note-form-tags-label" for="tags">Tags (optional)</label>
+					<input type="text" id="note-form-tags" name="tags" />
+					<label id="note-form-content-label" for="content">Note</label>
+					<textarea id="note-form-content" name="content" ></textarea>
+					<div class="ui-grid-a">
+						<div class="ui-block-a"><a href="javascript:history.back();" data-role="button" data-direction="reverse">Cancel</a></div>
+						<div class="ui-block-b"><input type="submit" value="Save" class="ui-block-b" /></div>
+					</div><!-- /ui-grid-a -->
+				</form>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /NOTE FORM -->
+		
+		<!-- NOTE -->
+		<div data-role="page" id="note">
+			<div data-role="header" data-position="fixed">
+				<h1>View Note</h1>
+				<a id="note-back-button" href="javascript:history.back();" data-iconpos="notext" data-icon="back" data-direction="reverse" class="ui-btn-left">Back</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<p class="note-student"></p>
+				<p class="note-created"></p>
+				<p class="note-tags"></p>
+				<p class="note-content"></p>
+				<div class="ui-grid-a">
+					<div class="ui-block-a"><a id="note-button-edit" href="#note-form" data-role="button" direction="forward">Edit</a></div>
+					<div class="ui-block-b"><a id="note-button-delete" href="#" data-role="button">Delete</a></div>
+				</div>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /NOTE -->
+
+		<!-- OPTIONS -->
+		<div data-role="page" id="options">
+			<div data-role="header" data-position="fixed">
+				<h1>Options</h1>
+				<a href="#home" data-icon="home" data-iconpos="notext" data-transition="flip" data-direction="reverse" class="ui-btn-left">Home</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<ul data-role="listview">
+					<li><a href="#options-export">Export notes</a></li>
+					<li><a href="#options-mode">Interaction Mode</a></li>
+					<li><a href="#options-about">About Cora</a></li>
+				</ul>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS -->
+
+		<!-- OPTIONS EXPORT -->
+		<div data-role="page" id="options-export">
+			<div data-role="header" data-position="fixed">
+				<h1>Export Notes</h1>
+				<a href="javascript:history.back();" data-icon="back" data-direction="reverse" data-iconpos="notext" class="ui-btn-left">Options</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<form>
+					<fieldset data-role="controlgroup">
+						<legend>Export as</legend>
+						<input type="radio" id="format-csv" name="format" value="csv" checked="checked" />
+						<label for="format-csv">CSV</label>
+						<input type="radio" id="format-zip" name="format" value="zip" />
+						<label for="format-zip">ZIP</label>
+					</fieldset>
+					<div>
+						<label for="email">Email address</label>
+						<input type="text" id="email" name="email" />
+					</div>
+					<div>
+						<input type="submit" value="Export" />
+					</div>
+				</form>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS EXPORT -->
+
+		<!-- OPTIONS ABOUT -->
+		<div data-role="page" id="options-about">
+			<div data-role="header" data-position="fixed">
+				<h1>About Cora</h1>
+				<a href="javascript:history.back();" data-icon="back" data-iconpos="notext" data-direction="reverse" class="ui-btn-left">Options</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<div id="logo"><img src="assets/images/logo.png" /></div>
+				<p>Copyright &copy; 2012 Provincial Outreach Program for Fetal Alcohol Spectrum Disorder (POPFASD).</p>
+				<p>Concept by Stacey Wakabayashi. Design by Stacey Wakabayashi and Matt Ferris. Development by Matt Ferris.</p>
+				<p>For support, please visit our website at <a href="http://www.fadoutreach.ca/cora/support">www.fasdoutreach.ca/cora/support</a>.</p>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS ABOUT -->
+		
+		<!-- DIALOGS -->
+		<div data-role="dialog" data-rel="dialog" data-transition="pop" id="dialog-no-object-specified">
+			<div data-role="header">
+				<h1>Uh oh!</h1>
+			</div><!-- /header -->
+			<div data-role="content">
+				<p>I don't have anything to display because I haven't been told what you would like to view.</p>
+				<p>(0001)</p>
+				<p><a href="#home" data-role="button">Close</a></p>
+			</div><!-- /content -->
+		</div>
+		<div data-role="dialog" data-rel="dialog" data-transition="pop" id="dialog-object-doesnt-exist">
+			<div data-role="header">
+				<h1>Uh oh!</h1>
+			</div><!-- /header -->
+			<div data-role="content">
+				<p>The object you've requested doesn't appear to exist!</p>
+				<p>(0002)</p>
+				<p><a href="#home" data-role="button">Close</a></p>
+			</div><!-- /content -->
+		</div>
+		<div data-role="dialog" data-rel="dialog" data-transition="pop" id="dialog-confirm-delete">
+			<div data-role="header">
+				<h1>Are you sure?</h1>
+			</div><!-- /header -->
+			<div data-role="content">
+				<p>Are you sure you want to delete? This action cannot be undone.</p>
+				<div class="ui-grid-a">
+					<div class="ui-block-a"><a id="dialog-confirm-delete-button-delete" href="#" data-role="button">Delete</a></p></div>
+					<div class="ui-block-b"><a id="dialog-confirm-delete-button-cancel" href="#" data-role="button">Cancel</a></p></div>
+				</div>
+			</div><!-- /content -->
+		</div>
+		<!-- /DIALOGS -->
+		
+	</body>
+</html>

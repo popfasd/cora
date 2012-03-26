@@ -1,0 +1,102 @@
+PROJECT
+	- define project lifecycle
+		- release/version numbering
+			- major.minor.fix (1.2.3)
+		- fixes released after testing
+		- major/minor released to horizon (beta) first, once problems fixed, then released to stable
+		- nightly builds released to dark-side
+		- tightly define project specifications to avoid feature creep
+	- create a suite of unit tests to prevent regression
+	- support site
+		- domain name?
+			- I can donate if we opensource
+		- detail included libraries and licenses
+		- downloads for non-ios devices
+		- link to appcache 'stable' build
+		- link to appcache 'horizon' (beta) build
+		- link to appcache 'dark-side' (nightly) build
+		- bug/feature tracker
+		- support forum
+		- blog with latest developments
+		- video tutorials
+	- should we open source?
+		- need to add copyright and licensing to all original files
+		- determine license
+		- if so, then host on github
+		- need to subscribe to updates for included libraries
+		- generate documentation
+		- code standards
+		- benefits
+			- as the original author, it's hard to objectively evaluate the code
+			- more eyes on the code means more objective evaluation
+			- opensource model promotes community
+			- means that the app can live on beyond POPFASD
+			- if I get hit by a bus, you'll possibly still have app development
+
+1.0 Release
+
+	* Deadline for stable build is October 2012
+	
+	FEATURES
+		- #note-form student and tag fields need to allow auto-complete
+		- swipe right to move back
+		- swipe left to move forward
+		- export notes
+		- first-run capability
+		- inform user if update is available (appcache, standalone apps only)
+		- #options-extras-loaddummydata loads dummy data
+		- #options-extras-reset screen which clears the database
+	
+	HOUSEKEEPING
+		- all attributes on tags are defined in the same order
+		- markup object methods with jsdoc tags (http://code.google.com/p/jsdoc-toolkit/w/list)
+		- all interface text needs to be abstracted to cora.Lang.[message]
+		- consistent naming for ID's
+			- header links
+		- console.log = function () {};
+		- try and wrap db activity in transactions where possible (persistence.transaction())
+		- ensure all nav is consistent
+			- home button always appears in the top left corner
+			- add buttons always appear in the top right corner
+		- tidy up use of id/sid/nid
+			- student ids should use sid
+			- note ids should use nid
+		- onDelete events where the entity id returns null should provide an error dialog
+			- currently, just silently transition to #home
+			
+	BUGS
+		- confirm that screens are cleared during onBeforeShow
+		- dialogs are a little flaky still, try having dialogs on separate pages
+		- page history needs to be cleaned up, back buttons don't always work
+		- after deleting note, #student still lists note
+		- consecutively added notes creates multiple copies
+			- almost like jquery mobiles history hash gets clogged up and tries to submit the form multiple times
+
+1.1+ Release
+
+	FEATURES
+		- ability to send error reports from app
+			- cached locally until connectivity available
+		- password protection
+			- forget password option which emails new random password to user
+			- need to save their email
+			- #option-security
+		- import feature
+			- text file containing students, one name per line
+			- "firstname lastname" format
+		- backup feature
+			- auto backup when app starts and connectivity present
+			- set backup schedule, checked when app is started
+		- progressive enhancement
+			- student column at pad/tablet sized screens and greater
+			- #note-form is loaded as a dialog
+		- integrate cloud services where applicable
+			- for backup
+		- #options-news, pulls rss feed from support blog
+		- #options-extras-stats, # of students added, # of notes added...
+		- #options-extras-tags, add and remove tags manually
+			- useful for removing misspelled tags
+	
+	PERFORMANCE
+		- track pages to determine when they need to be reloaded
+			- i.e, #home only needs to be reloaded if a new student has been added
