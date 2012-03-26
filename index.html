@@ -24,7 +24,7 @@
 		<div id="home" data-role="page">
 			<div data-role="header">
 				<h1>Students</h1>
-				<a class="ui-btn-left" href="#options" data-icon="gear" data-transition="flip" data-iconpos="notext">Options</a>
+				<a class="ui-btn-left" href="#options" data-icon="gear" data-iconpos="notext" data-transition="flip">Options</a>
 				<a id="home-button-student" class="ui-btn-right" data-icon="plus" data-direction="forward" data-iconpos="notext" href="#student-form">Add Student</a>
 			</div><!-- /header -->
 			<div data-role="content">
@@ -103,16 +103,17 @@
 		<div id="note" data-role="page">
 			<div data-role="header">
 				<h1>View Note</h1>
-				<a id="note-button-back" class="ui-btn-left" data-icon="back" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Back</a>
+				<a class="ui-btn-left" data-icon="home" data-iconpos="notext" data-direction="reverse" href="#home">Home</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<p class="note-student"></p>
 				<p class="note-created"></p>
 				<p class="note-tags"></p>
 				<p class="note-content"></p>
-				<div class="ui-grid-a">
-					<div class="ui-block-a"><a id="note-button-edit" data-role="button" direction="forward" href="#note-form">Edit</a></div>
-					<div class="ui-block-b"><a id="note-button-delete" data-role="button" href="#">Delete</a></div>
+				<div class="ui-grid-b">
+					<div class="ui-block-a"><a id="note-button-back" data-role="button" data-direction="reverse" href="javascript:history.back();">Back</a></div>
+					<div class="ui-block-b"><a id="note-button-edit" data-role="button" direction="forward" href="#note-form">Edit</a></div>
+					<div class="ui-block-c"><a id="note-button-delete" data-role="button" href="#">Delete</a></div>
 				</div>
 			</div><!-- /content -->
 		</div><!-- /page -->
@@ -138,23 +139,24 @@
 		<div id="options-export" data-role="page">
 			<div data-role="header">
 				<h1>Export Notes</h1>
-				<a class="ui-btn-left" data-icon="back" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<form>
 					<fieldset data-role="controlgroup">
 						<legend>Export as</legend>
 						<input id="options-export-form-format-csv" type="radio" name="format" value="csv" checked="checked" />
-						<label for="format-csv">CSV</label>
+						<label for="options-export-form-format-csv">CSV</label>
 						<input id="options-export-form-format-zip" type="radio" name="format" value="zip" />
-						<label for="format-zip">ZIP</label>
+						<label for="options-export-form-format-zip">ZIP</label>
 					</fieldset>
 					<div>
 						<label for="email">Email address</label>
 						<input id="options-export-form-email" type="text" name="email" />
 					</div>
-					<div>
-						<input type="submit" value="Export" />
+					<div class="ui-grid-a">
+						<div class="ui-block-a"><a id="options-export-button-back" data-role="button" data-direction="reverse" href="javascript:history.back();">Back</a></div>
+						<div class="ui-block-b"><input type="submit" value="Export" /></div>
 					</div>
 				</form>
 			</div><!-- /content -->
@@ -165,13 +167,14 @@
 		<div id="options-about" data-role="page">
 			<div data-role="header">
 				<h1>About Cora</h1>
-				<a class="ui-btn-left" data-icon="back" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<div id="options-about-logo"><img src="assets/images/logo.png" /></div>
 				<p>Copyright &copy; 2012 Provincial Outreach Program for Fetal Alcohol Spectrum Disorder (POPFASD).</p>
 				<p>Concept by Stacey Wakabayashi. Design by Stacey Wakabayashi and Matt Ferris. Development by Matt Ferris.</p>
 				<p>For support, please visit our website at <a href="http://www.fadoutreach.ca/cora/support">www.fasdoutreach.ca/cora/support</a>.</p>
+				<p><a id="options-export-button-back" data-role="button" data-direction="reverse" href="javascript:history.back();">Back</a></p>
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /OPTIONS ABOUT -->
