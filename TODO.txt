@@ -12,7 +12,6 @@
 			- use a mode variable (cora.Config.mode) to determine what features should be enabled
 	
 	HOUSEKEEPING
-		- markup object methods with jsdoc tags (http://code.google.com/p/jsdoc-toolkit/w/list)
 		- all interface text needs to be abstracted to cora.Lang.[message]
 		- console.log = function () {};
 		- try and wrap db activity in transactions where possible (persistence.transaction())
@@ -25,6 +24,7 @@
 		- dialogs are a little flaky still, try having dialogs on separate pages
 		- page history needs to be cleaned up, back buttons don't always work
 		- after deleting note, #student still lists note
+			- url is still #note?nid=[...]
 		- consecutively added notes creates multiple copies
 			- multiple calls occur to pagebeforeshow (two or more) in certain situations
 			- part of jquery mobile navigation

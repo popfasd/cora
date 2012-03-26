@@ -31,28 +31,43 @@ var cora = {
 cora.Date = function ( string )
 {
 	var date = new Date(string);
-	var months = ['January','February','March','April','May','June','July','August','September','Octoboer','November','December'];
+	var months = [
+		'January', 'February', 'March', 'April', 'May', 'June',
+		'July', 'August', 'September', 'Octoboer', 'November', 'December'
+		];
 	var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 	var that = {};
+	/**
+	* Return an object with properties: hours, minutes and meridiem (ante/AM, or post/PM)
+	* @return {object}
+	*/
 	that.getNoteTime = function ()
 	{
 		var h = date.getHours();
-		var ampm = 'AM';
+		var meridiem = 'AM';
 		var m = date.getMinutes();
 		if (h > 12)
 		{
-			ampm = 'PM';
+			meridiem = 'PM';
 			h -= 12;
 		}
 		if (h == 0) h = 12;
 		if (m < 10) m = '0'+m;
-		return {hours: h, minutes: m, ampm: ampm};
+		return {hours: h, minutes: m, meridiem: meridiem};
 	};
+	/**
+	 * Return a string in the format "HH:mm [AM/PM]"
+	 * @return {string}
+	 */
 	that.getNoteTimeAsString = function ()
 	{
 		var t = that.getNoteTime();
-		return t.hours+':'+t.minutes+' '+t.ampm;
+		return t.hours+':'+t.minutes+' '+t.meridiem;
 	};
+	/**
+	 * Return an object with properties: dayOfWeekName, monthName, dayOfMonth and year
+	 * @return {object}
+	 */
 	that.getNoteDate = function ()
 	{
 		return {
@@ -62,11 +77,19 @@ cora.Date = function ( string )
 			year: date.getFullYear()
 			};
 	};
+	/**
+	 * Return a string in the format "dayOfWeek, monthName dayofMonth, year"
+	 * @return {string}
+	 */
 	that.getNoteDateAsString = function ()
 	{
 		var d = that.getNoteDate();
 		return d.dayOfWeekName+', '+d.monthName+' '+d.dayOfMonth+', '+d.year;
 	};
+	/**
+	 * Return a number derived from a date in the format yyyymmdd
+	 * @return {number}
+	 */
 	that.getCompactDate = function ()
 	{
 		return date.getFullYear()+(date.getMonth()+1)+date.getDate();
@@ -77,17 +100,26 @@ cora.Date = function ( string )
 /**
  * EntityCacheConstructor object
  * Caches entities for use across sequential screen loads
+ * @return {object} Instance of EntityCache
  */
 cora.EntityCacheConstructor = function ()
 {
 	var cache = {};
 	var that = {};
+	/**
+	 * Check if an entity is cached
+	 * @return {bool} Return true if entity is cached, false if it isn't
+	 */
 	that.isCached = function ( o )
 	{
 		if (typeof o === 'object' && o !== null) o = o.id;
 		if (typeof cache[o] !== 'undefined') return true;
 		else return false;
 	};
+	/**
+	 * Add an entity to the cache
+	 * @param {object} o Entity to cache
+	 */
 	that.add = function ( o )
 	{
 		if (o !== null && !that.isCached(o))
@@ -96,22 +128,39 @@ cora.EntityCacheConstructor = function ()
 			cache[o.id] = o;
 		}
 	};
+	/**
+	 * Remove an entity from the cache
+	 * @param {object} o Entity to remove
+	 */
 	that.remove = function ( o )
 	{
 		console.log('cora: entity cache: removed '+o.id);
 		if (that.isCached(o)) delete cache[o.id];
 	};
+	/**
+	 * Clear all entities from the cache
+	 */
 	that.clear = function ()
 	{
 		console.log('cora: entity cache: cleared');
 		cache = [];
 	};
+	/**
+	 * Remove all entities from the cache except the specified one
+	 * @param {object} o The entity that shouldn't be removed
+	 */
 	that.removeAllExcept = function ( o )
 	{
 		console.log('cora: entity cache: removed all except '+o.id);
 		cache = [];
 		cache[o.id] = o;
 	};
+	/**
+	 * Get an entity from the cache. If the entity hasn't been cached then
+	 * the value of the parameter passed to the callback will be false
+	 * @param {string} id Entity ID
+	 * @param {function} callback Callback function
+	 */
 	that.get = function ( id, callback )
 	{
 		console.log('cora: entity cache: got '+id);
@@ -289,13 +338,13 @@ cora.flush = persistence.flush;
  * Controller object for jquery mobile router.
  */
 cora.Controller = {
-	/*
+	/**
 	 * Default action
 	 */
 	defaultAction: function ( type, match, ui )
 	{console.log('cora: default');
 	},
-	/*
+	/**
 	 * #home
 	 */
 	onShowHome: function ( type, match, ui)
@@ -312,7 +361,7 @@ cora.Controller = {
 			$('#home div[data-role="content"] > ul').listview('refresh');
 		});
 	},
-	/*
+	/**
 	 * #student-form
 	 */
 	onBeforeShowStudentForm: function ( type, match, ui )
@@ -354,7 +403,7 @@ cora.Controller = {
 			});
 		}
 	},
-	/*
+	/**
 	 * #student-form submission
 	 */
 	onSubmitStudentForm: function ()
@@ -402,7 +451,7 @@ cora.Controller = {
 		}
 		return false;
 	},
-	/*
+	/**
 	 * #student
 	 */
 	onBeforeShowStudent: function ( type, match, ui )
@@ -478,7 +527,7 @@ cora.Controller = {
 			});
 		}		
 	},
-	/*
+	/**
 	 * delete student
 	 */
 	onDeleteStudent: function ()
@@ -522,7 +571,7 @@ cora.Controller = {
 			});
 		}
 	},
-	/*
+	/**
 	 * #note-form
 	 */
 	onBeforeShowNoteForm: function ( type, match, ui )
@@ -607,7 +656,7 @@ cora.Controller = {
 			});
 		}
 	},
-	/*
+	/**
 	 * #note-form submission
 	 */
 	onSubmitNoteForm: function (e)
@@ -758,7 +807,7 @@ cora.Controller = {
 		}		
 		return false;
 	},
-	/*
+	/**
 	 * #note
 	 */
 	onBeforeShowNote: function ( type, match, ui )
@@ -808,7 +857,7 @@ cora.Controller = {
 			});
 		}
 	},
-	/*
+	/**
 	 * delete note
 	 */
 	onDeleteNote: function ()
