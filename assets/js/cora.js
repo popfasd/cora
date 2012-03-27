@@ -1,7 +1,20 @@
 /**
- * cora JS Library
- * Copyright (c) 2012 POPFASD
- * (Provincial Outreach Program for Fetal Alcohol Spectrum Disorder)
+ * CORA - Classroom Observation Recording Application
+ * Copyright (C) 2012  POPFASD (Provincial Outreach Program for Fetal
+ * Alcohol Spectrum Disorder)
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * http://fasdoutreach.ca/~cora/LICENSE.TXT
+ *
  * @author Matt Ferris <mferris@sd57.bc.ca>
  * @version alpha
  */
@@ -26,6 +39,7 @@ var cora = {
 
 /**
  * Date object
+ * @constructor
  * @param {object} [date] A date string
  */
 cora.Date = function ( string )
@@ -100,6 +114,7 @@ cora.Date = function ( string )
 /**
  * EntityCacheConstructor object
  * Caches entities for use across sequential screen loads
+ * @constructor
  * @return {object} Instance of EntityCache
  */
 cora.EntityCacheConstructor = function ()

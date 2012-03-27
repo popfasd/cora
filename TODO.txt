@@ -17,7 +17,6 @@
 		- all interface text needs to be abstracted to cora.Lang.[message]
 		- console.log = function () {};
 		- try and wrap db activity in transactions where possible (persistence.transaction())
-		- copyright credit and license at top of all original files
 			
 	BUGS
 		- confirm that screens are cleared during onBeforeShow
