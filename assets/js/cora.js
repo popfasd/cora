@@ -357,13 +357,13 @@ cora.Controller = {
 	 * Default action
 	 */
 	defaultAction: function ( type, match, ui )
-	{console.log('cora: default');
+	{
 	},
 	/**
 	 * #home
 	 */
 	onShowHome: function ( type, match, ui)
-	{console.log('cora: onShowHome');
+	{
 		$('#home form.ui-listview-filter input[data-type="search"]').attr('value', '');
 		$('#home form.ui-listview-filter a.ui-input-clear').addClass('ui-input-clear-hidden');
 		cora.getAllStudents(function (students) {
@@ -382,7 +382,7 @@ cora.Controller = {
 	 * #student-form
 	 */
 	onBeforeShowStudentForm: function ( type, match, ui )
-	{console.log('cora: onBeforeShowStudentForm');
+	{
 		$('#student-form-form').submit(cora.Controller.onSubmitStudentForm);
 		// Reset form fields
 		$('#student-form-form input').attr('value', '');
@@ -423,8 +423,10 @@ cora.Controller = {
 	/**
 	 * #student-form submission
 	 */
-	onSubmitStudentForm: function ()
-	{console.log('cora: onSubmitStudentForm');
+	onSubmitStudentForm: function ( e )
+	{
+		e.preventDefault();
+		e.stopImmediatePropagation();
 		$('#student-form-form label').removeClass('form-validation-error');
 		var studentId = $('#student-form-student-id').attr('value');
 		var firstName = $('#student-form-firstname').attr('value');
@@ -466,13 +468,12 @@ cora.Controller = {
 				$('#student-form-lastname-label').addClass('form-validation-error');
 			}
 		}
-		return false;
 	},
 	/**
 	 * #student
 	 */
 	onBeforeShowStudent: function ( type, match, ui )
-	{console.log('cora: onBeforeShowStudent');
+	{
 		$('#student-button-delete').click(cora.Controller.onDeleteStudent);
 		// reset content
 		$('#student div[data-role="content"] ul').empty();
@@ -548,7 +549,7 @@ cora.Controller = {
 	 * delete student
 	 */
 	onDeleteStudent: function ()
-	{console.log('cora: onDeleteStudent');
+	{
 		var studentId = $('#student').attr('data-cora-student-id');
 		if (typeof studentId !== 'undefined' && studentId != '')
 		{
@@ -592,7 +593,7 @@ cora.Controller = {
 	 * #note-form
 	 */
 	onBeforeShowNoteForm: function ( type, match, ui )
-	{console.log('cora: onBeforeShowNoteForm');
+	{
 		$('#note-form-form').submit(cora.Controller.onSubmitNoteForm);
 		// Reset form fields
 		$('#note-form-form input').attr('value', '');
@@ -676,9 +677,10 @@ cora.Controller = {
 	/**
 	 * #note-form submission
 	 */
-	onSubmitNoteForm: function (e)
-	{console.log('cora: onSubmitNoteForm');
+	onSubmitNoteForm: function ( e )
+	{
 		e.preventDefault();
+		e.stopImmediatePropagation();
 		$('#note-form-form label').removeClass('form-validation-error');
 		var noteId = $('#note-form-note-id').attr('value');
 		var studentId = $('#note-form-student-id').attr('value');
@@ -828,7 +830,7 @@ cora.Controller = {
 	 * #note
 	 */
 	onBeforeShowNote: function ( type, match, ui )
-	{console.log('cora: onBeforeShowNote');
+	{
 		$('#note-button-delete').click(cora.Controller.onDeleteNote);
 		var params = cora.Router.getParams(match[1]);
 		var studentId = params.sid;
@@ -878,7 +880,7 @@ cora.Controller = {
 	 * delete note
 	 */
 	onDeleteNote: function ()
-	{console.log('cora: onDeleteNote');
+	{
 		var noteId = $('#note').attr('data-cora-note-id');
 		if (typeof noteId !== 'undefined' && noteId != '')
 		{
