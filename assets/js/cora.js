@@ -364,6 +364,8 @@ cora.Controller = {
 	 */
 	onShowHome: function ( type, match, ui)
 	{console.log('cora: onShowHome');
+		$('#home form.ui-listview-filter input[data-type="search"]').attr('value', '');
+		$('#home form.ui-listview-filter a.ui-input-clear').addClass('ui-input-clear-hidden');
 		cora.getAllStudents(function (students) {
 			var html = '';
 			for (var i=0; i<students.length; i++)
@@ -485,7 +487,7 @@ cora.Controller = {
 					$('#student div[data-role="header"] > h1').html(
 						student.firstName+' '+student.lastName
 					);
-					$('#student a#note-button').click(function () {
+					$('#student-button-note').click(function () {
 						$(this).attr('href', '#note-form?sid='+student.id);
 					});
 					student.notes.order('created', false).list(function (notes) {
@@ -540,7 +542,7 @@ cora.Controller = {
 				reverse: false,
 				changeHash: false
 			});
-		}		
+		}
 	},
 	/**
 	 * delete student
@@ -594,7 +596,7 @@ cora.Controller = {
 		$('#note-form-form').submit(cora.Controller.onSubmitNoteForm);
 		// Reset form fields
 		$('#note-form-form input').attr('value', '');
-		$('#note-content').val('');
+		$('#note-form-content').val('');
 		$('#note-form-form label').removeClass('form-validation-error');
 		var params = cora.Router.getParams(match[1]);
 		var noteId = params.nid;

@@ -19,7 +19,6 @@
 		- try and wrap db activity in transactions where possible (persistence.transaction())
 			
 	BUGS
-		- confirm that screens are cleared during onBeforeShow
 		- dialogs are a little flaky still, try having dialogs on separate pages
 		- page history needs to be cleaned up, back buttons don't always work
 		- after deleting note, #student still lists note
