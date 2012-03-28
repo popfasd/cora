@@ -3,7 +3,6 @@
 	* Deadline for stable build is October 2012
 	
 	FEATURES
-		- #note-form student and tag fields need to allow auto-complete
 		- swipe right to move back
 		- swipe left to move forward
 		- export notes
@@ -16,6 +15,9 @@
 	HOUSEKEEPING
 		- all interface text needs to be abstracted to cora.Lang.[message]
 		- try and wrap db activity in transactions where possible (persistence.transaction())
+	
+	BUGS
+		- tag suggestions code is preventing tags from being removed from edited notes
 
 1.1+ Release
 

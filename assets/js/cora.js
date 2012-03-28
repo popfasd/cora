@@ -348,23 +348,42 @@ cora.getAllTags = function ( callback )
  */
 cora.suggestTags = function ( e )
 {
+	e.preventDefault();
+	e.stopImmediatePropagation();
 	var inputValue = $(this).attr('value');
-	var tags = inputValue.split(',');
-	var tag = tags.pop().trim();
+	var inTags = inputValue.split(',');
+	for (var i=0; i<inTags.length; i++) inTags[i] = inTags[i].trim();
+	var tag = inTags.pop();
 	if (tag != '')
 	{
 		cora.Tag.all().filter('name', 'like', tag+'%').list(function (tags) {
 			$('#note-form-tags-suggestions ul').empty();
 			for (var i=0; i<tags.length; i++)
 			{
-				$('#note-form-tags-suggestions ul').append(
-					'<li><a href="#">'+tags[i].name+'</li>'
-				);
+				var found = false;
+				for (var j=0; j<inTags.length; j++)
+				{
+					console.log(inTags[j].toLowerCase()+' = '+tags[i].name.toLowerCase());
+					if (inTags[j].toLowerCase() == tags[i].name.toLowerCase())
+					{
+						found = true;
+						break;
+					}
+				}
+				if (found === false)
+				{
+					$('#note-form-tags-suggestions ul').append(
+						'<li><a href="#">'+tags[i].name+'</li>'
+					);
+				}
 			}
 			$('#note-form-tags-suggestions a').click(function (e) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
 				var tag = $(this).html();
 				var taglist = $('#note-form-tags').attr('value');
 				taglist = taglist.split(',');
+				for (var i=0; i<taglist.length; i++) taglist[i] = taglist[i].trim();
 				taglist.pop();
 				taglist.push(tag);
 				$('#note-form-tags').attr('value', taglist.join(', '));
@@ -761,6 +780,7 @@ cora.Controller = {
 								// loop through tags in the form
 								for (var i=0; i<formTags.length; i++)
 								{
+									if (formTags[1] == '') continue;
 									var tname = formTags[i].trim();
 									var found = false;
 									// compare submitted tag with existing tags
@@ -891,7 +911,7 @@ cora.Controller = {
 			{
 				$.mobile.changePage('#dialog-confirm-delete?nid='+noteId+'&sid='+studentId, {
 					transition: 'pop',
-					reverse: true,
+					reverse: false,
 					changeHash: false
 				});
 			}
