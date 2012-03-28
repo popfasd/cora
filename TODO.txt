@@ -15,7 +15,6 @@
 	
 	HOUSEKEEPING
 		- all interface text needs to be abstracted to cora.Lang.[message]
-		- console.log = function () {};
 		- try and wrap db activity in transactions where possible (persistence.transaction())
 
 1.1+ Release

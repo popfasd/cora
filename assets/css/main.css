@@ -56,9 +56,21 @@ div[data-role="content"] .message {
 	font-weight: bold;
 }
 
+#note div[data-role="content"] {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+#note div.note-header {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
 #note p.note-student {
 	font-size: 1.2em;
 	font-weight: bold;
+	margin-top: 0;
+	padding-top: 0;
 	margin-bottom: 0;
 	padding-bottom: 0;
 }
@@ -72,6 +84,11 @@ div[data-role="content"] .message {
 	margin-top: 0;
 	padding-top: 0;
 	color: #888;
+}
+
+#note p.note-content {
+	padding: 15px;
+	border-top: solid 1px #ccc;
 }
 
 #student .ui-grid-a {
