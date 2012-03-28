@@ -17,7 +17,7 @@
 		- try and wrap db activity in transactions where possible (persistence.transaction())
 	
 	BUGS
-		- tag suggestions code is preventing tags from being removed from edited notes
+		- tag suggestions work in chrome, but not on Android
 
 1.1+ Release
 
