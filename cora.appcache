@@ -1,0 +1,30 @@
+#
+# CORA - Classroom Observation Recording Application
+# Copyright (C) 2012  POPFASD (Provincial Outreach Program for Fetal
+# Alcohol Spectrum Disorder)
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# http://fasdoutreach.ca/~cora/LICENSE.TXT
+#
+
+CACHE MANIFEST
+index.html
+assets/themes/jquery.mobile-1.0.1.min.css
+assets/themes/cora.min.css
+assets/css/main.css
+assets/js/jquery-1.7.min.js
+assets/js/jquery.mobile.router.min.js
+assets/js/jquery.mobile-1.0.1.min.js
+assets/js/persistence.js
+assets/js/persistence.store.sql.js
+assets/js/persistence.store.websql.js
+assets/js/cora.js
