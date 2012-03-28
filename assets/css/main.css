@@ -34,6 +34,42 @@ textarea {
 	height: 150px;
 }
 
+#note-form-tags-suggestions {
+	margin-top: -11px;
+	margin-left: 5px;
+	position: relative;
+	z-index: 1000;
+}
+
+#note-form-tags-suggestions > ul {
+	position: fixed;
+	padding: 0;
+	margin: 0;
+	background: #fff;
+	padding-left: 10px;
+	padding-right: 10px;
+	border-radius: 0 0 5px 5px;
+	-moz-border-radius: 0 0 5px 5px;
+	-o-border-radius: 0 0 5px 5px;
+	-webkit-border-radius: 0 0 5px 5px;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	-o-box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#note-form-tags-suggestions > ul li{
+	list-style: none;
+}
+
+#note-form-tags-suggestions > ul li a {
+	display: block;
+	line-height: 1.5em;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	text-decoration: none;
+}
+
 #options-about #logo,
 #options-about div[data-role="content"] {
 	max-width: 350px;

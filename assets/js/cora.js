@@ -344,6 +344,37 @@ cora.getAllTags = function ( callback )
 };
 
 /**
+ * Suggest tags to the user based on what they've type so far
+ */
+cora.suggestTags = function ( e )
+{
+	var inputValue = $(this).attr('value');
+	var tags = inputValue.split(',');
+	var tag = tags.pop().trim();
+	if (tag != '')
+	{
+		cora.Tag.all().filter('name', 'like', tag+'%').list(function (tags) {
+			$('#note-form-tags-suggestions ul').empty();
+			for (var i=0; i<tags.length; i++)
+			{
+				$('#note-form-tags-suggestions ul').append(
+					'<li><a href="#">'+tags[i].name+'</li>'
+				);
+			}
+			$('#note-form-tags-suggestions a').click(function (e) {
+				var tag = $(this).html();
+				var taglist = $('#note-form-tags').attr('value');
+				taglist = taglist.split(',');
+				taglist.pop();
+				taglist.push(tag);
+				$('#note-form-tags').attr('value', taglist.join(', '));
+				$('#note-form-tags-suggestions ul').empty();
+			});
+		});
+	}
+};
+
+/**
  * Flush object graph to database
  * @param {function} [callback] Callback function
  */
@@ -610,6 +641,10 @@ cora.Controller = {
 	 */
 	onBeforeShowNoteForm: function ( type, match, ui )
 	{
+		// setup tag suggestions
+		$('#note-form-tags-suggestions ul').empty();
+		$('#note-form-tags').keyup(cora.suggestTags);
+		// bind to submit
 		$('#note-form-form').submit(cora.Controller.onSubmitNoteForm);
 		// Reset form fields
 		$('#note-form-form input').attr('value', '');
