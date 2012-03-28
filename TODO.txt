@@ -9,9 +9,6 @@
 		- export notes
 		- #options-reset screen
 			- allows user to clear all tags and/or notes and/or students
-		- first-run capability
-			- use a settings table
-				- two columns: name, value
 		- inform user if update is available (appcache, standalone apps only)
 			- use a mode variable (cora.Config.mode) to determine what features should be enabled
 		- multi-delete notes
@@ -50,6 +47,9 @@
 		- #options-extras-tags, add and remove tags manually
 			- useful for removing misspelled tags
 		- #options-extras-loaddummydata loads dummy data
+		- first-run capability
+			- use a settings table
+				- two columns: name, value
 	
 	PERFORMANCE
 		- track pages to determine when they need to be reloaded
