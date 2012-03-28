@@ -7,11 +7,14 @@
 		- swipe right to move back
 		- swipe left to move forward
 		- export notes
+		- #options-reset screen
+			- allows user to clear all tags and/or notes and/or students
 		- first-run capability
 			- use a settings table
 				- two columns: name, value
 		- inform user if update is available (appcache, standalone apps only)
 			- use a mode variable (cora.Config.mode) to determine what features should be enabled
+		- multi-delete notes
 	
 	HOUSEKEEPING
 		- all interface text needs to be abstracted to cora.Lang.[message]
@@ -19,14 +22,7 @@
 		- try and wrap db activity in transactions where possible (persistence.transaction())
 			
 	BUGS
-		- dialogs are a little flaky still, try having dialogs on separate pages
 		- page history needs to be cleaned up, back buttons don't always work
-		- after deleting note, #student still lists note
-			- url is still #note?nid=[...]
-		- consecutively added notes creates multiple copies
-			- multiple calls occur to pagebeforeshow (two or more) in certain situations
-			- part of jquery mobile navigation
-			- may need to replace jquery.mobile.router.js as we need to have access to pagebeforechange()
 
 1.1+ Release
 
@@ -57,8 +53,22 @@
 		- #options-extras-tags, add and remove tags manually
 			- useful for removing misspelled tags
 		- #options-extras-loaddummydata loads dummy data
-		- #options-extras-reset screen which clears the database
 	
 	PERFORMANCE
 		- track pages to determine when they need to be reloaded
 			- i.e, #home only needs to be reloaded if a new student has been added
+
+2.0
+
+	FEATURES
+		- collaboration suite
+			- provide a server-based web app that allows synching between clients
+			- based on PHP/MySQL
+			- #options-collaborate screen in client
+				- username and password
+				- server address
+			- client syncs new notes,tags with server and pulls any updates
+			- web interface offers standard HTML5 appcache version of app
+			- administration interface
+				- bulk add students
+				- assign access to students based on teacher groups

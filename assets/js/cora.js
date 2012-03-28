@@ -474,7 +474,20 @@ cora.Controller = {
 	 */
 	onBeforeShowStudent: function ( type, match, ui )
 	{
-		$('#student-button-delete').click(cora.Controller.onDeleteStudent);
+		$('#student-button-delete').click(function (e) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			var studentId = $('#student').attr('data-cora-student-id');
+			if (typeof studentId !== 'undefined')
+			{
+				$.mobile.changePage('#dialog-confirm-delete?sid='+studentId, {
+					transition: 'pop',
+					reverse: true,
+					changeHash: false
+				});
+			}
+			return false;
+		});
 		// reset content
 		$('#student div[data-role="content"] ul').empty();
 		var studentId = cora.Router.getParams(match[1]).sid;
@@ -548,8 +561,10 @@ cora.Controller = {
 	/**
 	 * delete student
 	 */
-	onDeleteStudent: function ()
+	onDeleteStudent: function ( e )
 	{
+		e.preventDefault();
+		e.stopImmediatePropagation();
 		var studentId = $('#student').attr('data-cora-student-id');
 		if (typeof studentId !== 'undefined' && studentId != '')
 		{
@@ -588,6 +603,7 @@ cora.Controller = {
 				}
 			});
 		}
+		return false;
 	},
 	/**
 	 * #note-form
@@ -831,7 +847,21 @@ cora.Controller = {
 	 */
 	onBeforeShowNote: function ( type, match, ui )
 	{
-		$('#note-button-delete').click(cora.Controller.onDeleteNote);
+		$('#note-button-delete').click(function (e) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			var noteId = $('#note').attr('data-cora-note-id');
+			var studentId = $('#note').attr('data-cora-student-id');
+			if (typeof noteId !== 'undefined' && noteId != '')
+			{
+				$.mobile.changePage('#dialog-confirm-delete?nid='+noteId+'&sid='+studentId, {
+					transition: 'pop',
+					reverse: true,
+					changeHash: false
+				});
+			}
+			return false;
+		});
 		var params = cora.Router.getParams(match[1]);
 		var studentId = params.sid;
 		var noteId = params.nid;
@@ -842,6 +872,7 @@ cora.Controller = {
 				if (note !== null)
 				{
 					$('#note').attr('data-cora-note-id', note.id);
+					$('#note').attr('data-cora-student-id', student.id);
 					$('#note p.note-student').html(
 						student.firstName+' '+student.lastName
 					);
@@ -877,43 +908,55 @@ cora.Controller = {
 		}
 	},
 	/**
-	 * delete note
+	 * #dialog-confirm-delete
 	 */
-	onDeleteNote: function ()
+	onBeforeShowDialogConfirmDelete: function ( type, match, ui )
 	{
-		var noteId = $('#note').attr('data-cora-note-id');
-		if (typeof noteId !== 'undefined' && noteId != '')
+		var params = cora.Router.getParams(match[1]);
+		var noteId = params.nid;
+		var studentId = params.sid;
+		if (typeof noteId !== 'undefined')
 		{
-			cora.getNoteById(noteId, function (note) {
-				if (note !== null)
-				{
-					$('#dialog-confirm-delete-button-delete').click(function () {
-						cora.removeNote(note);
-						persistence.flush(function () {
-							$.mobile.changePage('#student', {
-								transition: 'pop',
-								reverse: true,
-								changeHash: false
-							});
+			$('#dialog-confirm-delete-button-delete').attr('data-cora-note-id', noteId);
+			$('#dialog-confirm-delete-button-delete').attr('data-cora-student-id', studentId);
+			$('#dialog-confirm-delete-button-cancel').attr('href', '#note?nid='+noteId);
+			$('#dialog-confirm-delete-button-delete').click(function (e) {
+				var noteId = $(this).attr('data-cora-note-id');
+				var studentId = $(this).attr('data-cora-student-id');
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				cora.getNoteById(noteId, function (note) {
+					cora.removeNote(note);
+					persistence.flush(function () {
+						$.mobile.changePage('#student?sid='+studentId, {
+							transition: 'pop',
+							reverse: true,
+							changeHash: true
 						});
 					});
-					$('#dialog-confirm-delete-button-cancel').attr('href',
-						'#note?nid='+note.id
-					);
-					$.mobile.changePage('#dialog-confirm-delete', {
-						transition: 'pop',
-						reverse: true,
-						changeHash: false
+					return false;
+				});
+			});
+		}
+		else if (typeof studentId !== 'undefined')
+		{
+			$('#dialog-confirm-delete-button-delete').attr('data-cora-student-id', studentId);
+			$('#dialog-confirm-delete-button-cancel').attr('href', '#student?sid='+studentId);
+			$('#dialog-confirm-delete-button-delete').click(function (e) {
+				var studentId = $(this).attr('data-cora-student-id');
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				cora.getStudentById(studentId, function (student) {
+					cora.removeStudent(student);
+					persistence.flush(function () {
+						$.mobile.changePage('#home', {
+							transition: 'pop',
+							reverse: true,
+							changeHash: true
+						});
 					});
-				}
-				else
-				{
-					$.mobile.changePage('#home', {
-						transition: 'pop',
-						reverse: true,
-						changeHash: false
-					});
-				}
+					return false;
+				});
 			});
 		}
 	}
@@ -926,6 +969,7 @@ cora.Controller = {
  */
 cora.initialize = function ( callback, config )
 {
+	$.mobile.allowCrossDomainPages = true;
 	$.mobile.defaultPageTransition = 'slide';
 	cora.EntityCache = cora.EntityCacheConstructor();
 	cora.Router = new $.mobile.Router([
@@ -935,6 +979,7 @@ cora.initialize = function ( callback, config )
 		{'#student([?].*)': {events: 'bs', handler: 'onBeforeShowStudent'}},
 		{'#note-form([?].*)': {events: 'bs', handler: 'onBeforeShowNoteForm'}},
 		{'#note([?].*)': {events: 'bs', handler: 'onBeforeShowNote'}},
+		{'#dialog-confirm-delete([?].*)': {events: 'bs', handler: 'onBeforeShowDialogConfirmDelete'}},
 		{'defaultHandler': 'defaultAction'}
 	], cora.Controller);
 	/*
