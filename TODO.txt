@@ -20,9 +20,6 @@
 		- all interface text needs to be abstracted to cora.Lang.[message]
 		- console.log = function () {};
 		- try and wrap db activity in transactions where possible (persistence.transaction())
-			
-	BUGS
-		- page history needs to be cleaned up, back buttons don't always work
 
 1.1+ Release
 

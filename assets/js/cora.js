@@ -865,6 +865,7 @@ cora.Controller = {
 		var params = cora.Router.getParams(match[1]);
 		var studentId = params.sid;
 		var noteId = params.nid;
+		$('#note-button-back').attr('href', '#student?sid='+studentId);
 		var student = cora.EntityCache.get(studentId);
 		if (typeof noteId !== 'undefined' && noteId !== '')
 		{
@@ -919,7 +920,7 @@ cora.Controller = {
 		{
 			$('#dialog-confirm-delete-button-delete').attr('data-cora-note-id', noteId);
 			$('#dialog-confirm-delete-button-delete').attr('data-cora-student-id', studentId);
-			$('#dialog-confirm-delete-button-cancel').attr('href', '#note?nid='+noteId);
+			$('#dialog-confirm-delete-button-cancel').attr('href', '#note?nid='+noteId+'&sid='+studentId);
 			$('#dialog-confirm-delete-button-delete').click(function (e) {
 				var noteId = $(this).attr('data-cora-note-id');
 				var studentId = $(this).attr('data-cora-student-id');
