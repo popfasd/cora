@@ -45,9 +45,7 @@ textarea {
 	position: fixed;
 	padding: 0;
 	margin: 0;
-	background: #fff;
-	padding-left: 10px;
-	padding-right: 10px;
+	background: #f8f8f8;
 	border-radius: 0 0 5px 5px;
 	-moz-border-radius: 0 0 5px 5px;
 	-o-border-radius: 0 0 5px 5px;
@@ -57,19 +55,26 @@ textarea {
 	-o-box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 	-webkit-box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
-
+/*
 #note-form-tags-suggestions > ul li{
 	list-style: none;
+}
+
+#note-form-tags-suggestions > ul:first-child {
+	border: 0;
+}
+
+#note-form-tags-suggestions > ul li {
+	border-bottom: solid #ddd 1px;
 }
 
 #note-form-tags-suggestions > ul li a {
 	display: block;
 	line-height: 1.5em;
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding: 3px 10px 3px 10px;	
 	text-decoration: none;
 }
-
+*/
 #options-about #logo,
 #options-about div[data-role="content"] {
 	max-width: 350px;

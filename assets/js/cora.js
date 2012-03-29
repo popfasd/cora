@@ -366,17 +366,21 @@ cora.suggestTags = function ( e )
 					console.log(inTags[j].toLowerCase()+' = '+tags[i].name.toLowerCase());
 					if (inTags[j].toLowerCase() == tags[i].name.toLowerCase())
 					{
+						console.log('matched, so not suggesting');
 						found = true;
 						break;
 					}
 				}
 				if (found === false)
 				{
+					console.log('suggesting '+tags[i].name);
 					$('#note-form-tags-suggestions ul').append(
 						'<li><a href="#">'+tags[i].name+'</li>'
 					);
 				}
 			}
+			$('#note-form-tags-suggestions ul').listview('refresh');
+			$('#note-form-tags-suggestions ul').show();
 			$('#note-form-tags-suggestions a').click(function (e) {
 				e.preventDefault();
 				e.stopImmediatePropagation();
@@ -387,7 +391,7 @@ cora.suggestTags = function ( e )
 				taglist.pop();
 				taglist.push(tag);
 				$('#note-form-tags').attr('value', taglist.join(', '));
-				$('#note-form-tags-suggestions ul').empty();
+				$('#note-form-tags-suggestions ul').hide();
 			});
 		});
 	}
