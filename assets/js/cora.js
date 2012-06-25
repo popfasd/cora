@@ -356,6 +356,8 @@ cora.suggestTags = function (inputValue)
 	{
 		cora.Tag.all().filter('name', 'like', tag+'%').list(function (tags) {
 			$('#note-form-tags-suggestions ul').empty();
+			var numSuggestions = 0;
+			var maxSuggestions = 5;
 			for (var i=0; i<tags.length; i++)
 			{
 				var found = false;
@@ -372,9 +374,17 @@ cora.suggestTags = function (inputValue)
 				if (found === false)
 				{
 					console.log('suggesting '+tags[i].name);
-					$('#note-form-tags-suggestions ul').append(
-						'<li><a href="#">'+tags[i].name+'</li>'
-					);
+					if (numSuggestions < maxSuggestions)
+					{
+						numSuggestions++;
+						$('#note-form-tags-suggestions ul').append(
+							'<li><a href="#">'+tags[i].name+'</li>'
+						);
+					}
+					else
+					{
+						break;
+					}
 				}
 			}
 			$('#note-form-tags-suggestions ul').listview('refresh');
@@ -675,7 +685,7 @@ cora.Controller = {
 			}
 			cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'")', 200);
 		});
-		$('#note-form-tags').blur(function () {
+		$('#note-form *').focusin(function () {
 			$('#note-form-tags-suggestions ul').hide();
 		});
 		// bind to submit
