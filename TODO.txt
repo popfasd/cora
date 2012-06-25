@@ -25,6 +25,7 @@
 	
 	BUGS
 		- hitting cancel when adding a note totally breaks the ability to move backward through history
+		- not form isn't cleared after use on android
 
 1.1+ Release
 
