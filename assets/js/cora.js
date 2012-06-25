@@ -387,7 +387,7 @@ cora.suggestTags = function (inputValue)
 					}
 				}
 			}
-			$('#note-form-tags-suggestions ul').listview('refresh');
+			/*$('#note-form-tags-suggestions ul').listview('refresh');*/
 			$('#note-form-tags-suggestions ul').show();
 			cora.suggestTagsTimeout = null;
 			$('#note-form-tags-suggestions a').click(function (e) {
