@@ -24,7 +24,7 @@
 		- try and wrap db activity in transactions where possible (persistence.transaction())
 	
 	BUGS
-		- tag suggestions work in chrome, but not on Android
+		- hitting cancel when adding a note totally breaks the ability to move backward through history
 
 1.1+ Release
 
