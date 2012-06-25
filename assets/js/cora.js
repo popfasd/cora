@@ -346,11 +346,9 @@ cora.getAllTags = function ( callback )
 /**
  * Suggest tags to the user based on what they've type so far
  */
-cora.suggestTags = function ( e )
+cora.suggestTagsTimeout = null;
+cora.suggestTags = function (inputValue)
 {
-	e.preventDefault();
-	e.stopImmediatePropagation();
-	var inputValue = $(this).attr('value');
 	var inTags = inputValue.split(',');
 	for (var i=0; i<inTags.length; i++) inTags[i] = inTags[i].trim();
 	var tag = inTags.pop();
@@ -381,6 +379,7 @@ cora.suggestTags = function ( e )
 			}
 			$('#note-form-tags-suggestions ul').listview('refresh');
 			$('#note-form-tags-suggestions ul').show();
+			cora.suggestTagsTimeout = null;
 			$('#note-form-tags-suggestions a').click(function (e) {
 				e.preventDefault();
 				e.stopImmediatePropagation();
@@ -666,7 +665,16 @@ cora.Controller = {
 	{
 		// setup tag suggestions
 		$('#note-form-tags-suggestions ul').empty();
-		$('#note-form-tags').keyup(cora.suggestTags);
+		$('#note-form-tags').keyup(function (e) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			var inputValue = $(this).attr('value');
+		    if (cora.suggestTagsTimeout !== null)
+			{
+				clearTimeout(cora.suggestTagsTimeout);
+			}
+			cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'")', 500);
+		});
 		// bind to submit
 		$('#note-form-form').submit(cora.Controller.onSubmitNoteForm);
 		// Reset form fields
