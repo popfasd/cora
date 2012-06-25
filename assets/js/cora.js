@@ -673,7 +673,10 @@ cora.Controller = {
 			{
 				clearTimeout(cora.suggestTagsTimeout);
 			}
-			cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'")', 500);
+			cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'")', 200);
+		});
+		$('#note-form-tags').blur(function () {
+			$('#note-form-tags-suggestions ul').hide();
 		});
 		// bind to submit
 		$('#note-form-form').submit(cora.Controller.onSubmitNoteForm);
