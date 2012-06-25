@@ -11,6 +11,13 @@
 		- inform user if update is available (appcache, standalone apps only)
 			- use a mode variable (cora.Config.mode) to determine what features should be enabled
 		- multi-delete notes
+		- password protection
+			- forget password option which emails new random password to user
+			- need to save their email
+			- #option-security
+		- first-run capability
+			- use a settings table
+				- two columns: name, value
 	
 	HOUSEKEEPING
 		- all interface text needs to be abstracted to cora.Lang.[message]
@@ -27,10 +34,6 @@
 	FEATURES
 		- ability to send error reports from app
 			- cached locally until connectivity available
-		- password protection
-			- forget password option which emails new random password to user
-			- need to save their email
-			- #option-security
 		- import feature
 			- text file containing students, one name per line
 			- "firstname lastname" format
@@ -48,9 +51,6 @@
 		- #options-extras-tags, add and remove tags manually
 			- useful for removing misspelled tags
 		- #options-extras-loaddummydata loads dummy data
-		- first-run capability
-			- use a settings table
-				- two columns: name, value
 	
 	PERFORMANCE
 		- track pages to determine when they need to be reloaded
