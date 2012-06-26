@@ -22,9 +22,6 @@
 	HOUSEKEEPING
 		- all interface text needs to be abstracted to cora.Lang.[message]
 		- try and wrap db activity in transactions where possible (persistence.transaction())
-	
-	BUGS
-		- not form isn't cleared after use on android
 
 1.1+ Release
 
