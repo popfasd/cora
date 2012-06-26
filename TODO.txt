@@ -5,7 +5,6 @@
 	FEATURES
 		- swipe right to move back
 		- swipe left to move forward
-		- export notes
 		- #options-reset screen
 			- allows user to clear all tags and/or notes and/or students
 		- inform user if update is available (appcache, standalone apps only)
