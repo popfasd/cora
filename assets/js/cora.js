@@ -723,6 +723,7 @@ cora.Controller = {
 						$('#note-form-student-name').attr(
 							'disabled', 'disabled'
 						);
+						$('#note-form-button-back').attr('href', '#student?sid='+studentId);
 					}
 					else
 					{
