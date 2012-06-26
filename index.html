@@ -162,26 +162,30 @@
 		<div id="options-export" data-role="page">
 			<div data-role="header">
 				<h1>Export Notes</h1>
-				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
-				<form>
-					<fieldset data-role="controlgroup">
-						<legend>Export as</legend>
-						<input id="options-export-form-format-csv" type="radio" name="format" value="csv" checked="checked" />
-						<label for="options-export-form-format-csv">CSV</label>
-						<input id="options-export-form-format-zip" type="radio" name="format" value="zip" />
-						<label for="options-export-form-format-zip">ZIP</label>
-					</fieldset>
-					<div>
-						<label for="email">Email address</label>
-						<input id="options-export-form-email" type="text" name="email" />
-					</div>
-					<div class="ui-grid-a">
-						<div class="ui-block-a"><a id="options-export-button-back" data-role="button" data-direction="reverse" href="javascript:history.back();">Back</a></div>
-						<div class="ui-block-b"><input type="submit" value="Export" /></div>
-					</div>
-				</form>
+				<p>The export feature allows you to save your notes to a format that is more suitable while compiling reports.</p>
+				<div class="ui-grid-a">
+					<div class="ui-block-a"><a id="options-export-button-back" data-role="button" data-direction="reverse" href="javascript:history.back();">Back</a></div>
+					<div class="ui-block-b"><a id="options-export-button-export" data-role="button" href="#options-export-data">Export</a></div>
+				</div>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS EXPORT -->
+
+		<!-- OPTIONS EXPORT DATA -->
+		<div id="options-export-data" data-role="page">
+			<div data-role="header">
+				<h1>Export Data</h1>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<p>Copy and paste the content below into a text editor or spreadsheet program.</p>
+				<textarea id="options-export-data-textarea" disabled="disabled"></textarea>
+				<div class="ui-grid-a">
+					<div><a id="options-export-button-back" data-role="button" data-direction="reverse" href="#options">Done</a></div>
+				</div>
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /OPTIONS EXPORT -->
