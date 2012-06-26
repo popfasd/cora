@@ -1039,7 +1039,50 @@ cora.Controller = {
 				});
 			});
 		}
-	}
+	},
+	/**
+	 * #options-export-data
+	 */
+	onBeforeShowExportData: function ( type, match, ui )
+	{
+		// check if browser supports File API, particularly FileWriter
+		if (typeof(FileWriter) !== 'undefined')
+		{
+		}
+		// just dump the data into a textarea and have the user copy and paste
+		else
+		{
+			cora.getAllStudents(function (students) {
+				$('#options-export-data-textarea').append(
+					'"First name", "Last name", "Date", "Tags", "Note"\r\n'
+				);
+				for (var s=0; s<students.length; s++)
+				{
+					var student = students[s];
+					student.notes.list(function (notes) {
+						for (var n=0; n<notes.length; n++)
+						{
+							var note = notes[n];
+							note.tags.list(function (tags) {
+								var data = '';
+								data += '"' + student.firstName + '", "' + student.lastName + '"';
+								data += ', "' + (new cora.Date(note.created)).getNoteDateAsString() + '"';
+								var taglist = [];
+								for (var t = 0; t<tags.length; t++)
+								{
+									taglist.push(tags[t].name);
+								}
+								data += ', "' + taglist.join(';') + '"';
+								data += ', "' + note.content + '"';
+								data += '\r\n';
+								$('#options-export-data-textarea').append(data);
+							});
+						}
+					});
+				}
+			});
+		}
+	},
 };
 
 /**
@@ -1059,6 +1102,7 @@ cora.initialize = function ( callback, config )
 		{'#student([?].*)': {events: 'bs', handler: 'onBeforeShowStudent'}},
 		{'#note-form([?].*)': {events: 'bs', handler: 'onBeforeShowNoteForm'}},
 		{'#note([?].*)': {events: 'bs', handler: 'onBeforeShowNote'}},
+		{'#options-export-data': {events: 'bs', handler: 'onBeforeShowExportData'}},
 		{'#dialog-confirm-delete([?].*)': {events: 'bs', handler: 'onBeforeShowDialogConfirmDelete'}},
 		{'defaultHandler': 'defaultAction'}
 	], cora.Controller);
