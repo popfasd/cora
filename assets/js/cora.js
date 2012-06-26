@@ -564,9 +564,7 @@ cora.Controller = {
 					$('#student div[data-role="header"] > h1').html(
 						student.firstName+' '+student.lastName
 					);
-					$('#student-button-note').click(function () {
-						$(this).attr('href', '#note-form?sid='+student.id);
-					});
+					$('#student-button-note').attr('href', '#note-form?sid='+student.id);
 					student.notes.order('created', false).list(function (notes) {
 						if (notes.length == 0)
 						{
