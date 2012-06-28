@@ -430,12 +430,44 @@ cora.Controller = {
 		$('#home form.ui-listview-filter input[data-type="search"]').attr('value', '');
 		$('#home form.ui-listview-filter a.ui-input-clear').addClass('ui-input-clear-hidden');
 		cora.getAllStudents(function (students) {
+			/*
+			 * Determine sort order of list
+			 */
+			if (students.length !== 0)
+			{
+				var student = students[0];
+				if (student.firstName == '' || student.lastName === '' || student.lastName.length < 1)
+				{
+					students.sort(function (a, b) {
+						if (a.firstName > b.firstName)
+						{
+							return 1;
+						}
+						else if (a.firstName < b.firstName)
+						{
+							return -1;
+						}
+						else
+						{
+							return 0;
+						}
+					});
+				}				
+			}
 			var html = '';
 			for (var i=0; i<students.length; i++)
 			{
 				var s = students[i];
-				html += '<li><a href="#student?sid='+s.id+'">'+
-					s.lastName+', '+s.firstName+'</a></li>';
+				var name = '';
+				if (s.lastName.length <= 1)
+				{
+					name = s.firstName+' '+s.lastName;
+				}
+				else
+				{
+					name = s.lastName+', '+s.firstName;
+				}
+				html += '<li><a href="#student?sid='+s.id+'">'+name+'</a></li>';
 			}
 			$('#home div[data-role="content"] > ul').html(html);
 			$('#home div[data-role="content"] > ul').listview('refresh');
@@ -494,7 +526,7 @@ cora.Controller = {
 		var studentId = $('#student-form-student-id').attr('value');
 		var firstName = $('#student-form-firstname').attr('value');
 		var lastName = $('#student-form-lastname').attr('value');
-		if (firstName != '' && lastName != '')
+		if (firstName != '')
 		{
 			if (studentId != '')
 			{
@@ -525,10 +557,6 @@ cora.Controller = {
 			if (!firstName)
 			{
 				$('#student-form-firstname-label').addClass('form-validation-error');
-			}
-			if (!lastName)
-			{
-				$('#student-form-lastname-label').addClass('form-validation-error');
 			}
 		}
 	},
@@ -965,7 +993,7 @@ cora.Controller = {
 						for (var i=0; i<tags.length; i++) taglist.push(tags[i].name);
 						$('#note p.note-tags').html('Tags: '+taglist.join(', '));
 					});
-					$('#note p.note-content').html(note.content);
+					$('#note p.note-content').html(note.content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br />'));
 					$('#note-button-edit').attr('href', '#note-form?nid='+noteId);
 				}
 				else
