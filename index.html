@@ -275,13 +275,31 @@
 					<label id="options-manage-tags-form-tag-name-label" for="tagName">Tag name</label>
 					<input id="options-manage-tags-form-tag-name" type="text" name="tagName" />
 					<div class="ui-grid-a">
-						<div class="ui-block-a"><a id="options-managa-tags-form-button-back" data-role="button" data-direction="reverse" data-direction="reverse" href="">Delete</a></div>
+						<div class="ui-block-a"><a id="options-manage-tags-form-button-delete" data-role="button" href="">Delete</a></div>
 						<div class="ui-block-b"><input type="submit" value="Save" /></div>
 					</div><!-- /ui-grid-a -->					
 				</form>
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /OPTIONS MANAGE TAGS VIEW -->
+
+		<!-- OPTIONS MANAGE TAGS DELETE -->
+		<div id="options-manage-tags-delete" data-role="page">
+			<div data-role="header">
+				<h1>Delete tag</h1>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
+				<a class="ui-btn-right" data-icon="back" data-iconpos="notext" data-direction="reverse" href="#options-manage-tags">Manage tags</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<p>Are you sure you want to delete this tag? The tag will be removed from all notes that it has been applied to. This action cannot be undone.</p>
+				<p id="options-manage-tags-delete-tag-name"></p>
+				<div class="ui-grid-a">
+						<div class="ui-block-a"><a id="options-manage-tags-delete-button-cancel" data-role="button" data-direction="reverse" href="">Cancel</a></div>
+						<div class="ui-block-b"><a id="options-manage-tags-delete-button-delete" data-role="button" data-direction="reverse" href="#options-manage-tags">Delete</a></div>
+					</div><!-- /ui-grid-a -->
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS MANAGE TAGS DELETE -->
 		
 		<!-- OPTIONS ABOUT -->
 		<div id="options-about" data-role="page">

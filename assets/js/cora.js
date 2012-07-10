@@ -1159,6 +1159,7 @@ cora.Controller = {
 		var params = cora.Router.getParams(match[1]);
 		var tagId = params.tid;
 		$('#options-manage-tags-form-tag-id').val(tagId);
+		$('#options-manage-tags-form-button-delete').attr('href', '#options-manage-tags-delete?tid='+tagId);
 		cora.getTagById(tagId, function (tag) {
 			$('#options-manage-tags-form-tag-name').val(tag.name);
 		});
@@ -1188,6 +1189,21 @@ cora.Controller = {
 			$('#options-manage-tags-form-tag-name-label').addClass('form-validation-error');
 		}
 	},
+	/**
+	 * #options-manage-tags-delete
+	 */
+	onBeforeShowManageTagsDelete: function ( type, match, ui )
+	{
+		var params = cora.Router.getParams(match[1]);
+		var tagId = params.tid;
+		$('#options-manage-tags-delete-button-cancel').attr('href', '#options-manage-tags-view?tid='+tagId);
+		$('#options-manage-tags-delete-button-delete').click(function () {
+			cora.removeTag(tagId);
+		});
+		cora.getTagById(tagId, function ( tag ) {
+			$('#options-manage-tags-delete-tag-name').html('Tag: <i>'+tag.name+'</i>');
+		});
+	},
 };
 
 /**
@@ -1210,6 +1226,7 @@ cora.initialize = function ( callback, config )
 		{'#options-export-data': {events: 'bs', handler: 'onBeforeShowExportData'}},
 		{'#options-manage-tags$': {events: 'bs', handler: 'onBeforeShowManageTags'}},
 		{'#options-manage-tags-view([?].*)': {events: 'bs', handler: 'onBeforeShowManageTagsView'}},
+		{'#options-manage-tags-delete([?].*)': {events: 'bs', handler: 'onBeforeShowManageTagsDelete'}},
 		{'#dialog-confirm-delete([?].*)': {events: 'bs', handler: 'onBeforeShowDialogConfirmDelete'}},
 		{'defaultHandler': 'defaultAction'}
 	], cora.Controller);
