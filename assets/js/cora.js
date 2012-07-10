@@ -322,6 +322,26 @@ cora.createTag = function ( name )
 cora.removeTag = cora.removeEntity;
 
 /**
+ * Get tag given an ID
+ * @param {string} id ID of the tag to get
+ * @param {function} callback Callback function
+ */
+ cora.getTagById = function ( id, callback )
+ {
+	if (cora.EntityCache.isCached(id))
+	{
+		cora.EntityCache.get(id, callback);
+	}
+	else
+	{
+		cora.Tag.load(id, function (t) {
+			cora.EntityCache.add(t);
+			callback(t);
+		});
+	}
+ };
+ 
+/**
  * Get tag given a name
  * @param {string} name Name of the tag
  * @param (function} callback Callback function
@@ -492,9 +512,11 @@ cora.Controller = {
 		{
 			// new student
 			$('#student-form h1').html('Add student');
+			$('#student-form-button-cancel').attr('href', '#home');
 		}
 		else
 		{
+			$('#student-form-button-cancel').attr('href', '#student?sid='+studentId);
 			// editing student
 			$('#student-form h1').html('Edit student');
 			cora.getStudentById(studentId, function (student) {
@@ -1111,6 +1133,61 @@ cora.Controller = {
 			});
 		}
 	},
+	/**
+	 * #options-manage-tags
+	 */
+	onBeforeShowManageTags: function ( type, match, ui )
+	{
+		$('#options-manage-tags ul').empty();
+		cora.getAllTags(function (tags) {
+			for (var t=0; t<tags.length; t++)
+			{
+				var tag = tags[t];
+				$('#options-manage-tags ul').append(
+					'<li><a href="#options-manage-tags-view?tid='+tag.id+'">'+tag.name+'</a></li>'
+				);
+			}
+			$('#options-manage-tags ul').listview('refresh');
+		});
+	},
+	/**
+	 * #options-manage-tags-view
+	 */
+	onBeforeShowManageTagsView: function ( type, match, ui )
+	{
+		$('#options-manage-tags-form').submit(cora.Controller.onSubmitShowManageTagsForm);
+		var params = cora.Router.getParams(match[1]);
+		var tagId = params.tid;
+		$('#options-manage-tags-form-tag-id').val(tagId);
+		cora.getTagById(tagId, function (tag) {
+			$('#options-manage-tags-form-tag-name').val(tag.name);
+		});
+	},
+	/**
+	 * #options-manage-tags-form submission
+	 */
+	onSubmitShowManageTagsForm: function ( e )
+	{
+		var tagId = $('#options-manage-tags-form-tag-id').attr('value');
+		var tagName = $('#options-manage-tags-form-tag-name').attr('value');
+		console.log('tag id: '+tagId);
+		if (tagName != '')
+		{
+			cora.getTagById(tagId, function (tag) {
+				tag.name = tagName;
+				cora.persistence.flush(function () {
+					$.mobile.changePage('#options-manage-tags', {
+						reverse: true,
+						changeHash: false
+					});
+				});
+			});
+		}
+		else
+		{
+			$('#options-manage-tags-form-tag-name-label').addClass('form-validation-error');
+		}
+	},
 };
 
 /**
@@ -1131,6 +1208,8 @@ cora.initialize = function ( callback, config )
 		{'#note-form([?].*)': {events: 'bs', handler: 'onBeforeShowNoteForm'}},
 		{'#note([?].*)': {events: 'bs', handler: 'onBeforeShowNote'}},
 		{'#options-export-data': {events: 'bs', handler: 'onBeforeShowExportData'}},
+		{'#options-manage-tags$': {events: 'bs', handler: 'onBeforeShowManageTags'}},
+		{'#options-manage-tags-view([?].*)': {events: 'bs', handler: 'onBeforeShowManageTagsView'}},
 		{'#dialog-confirm-delete([?].*)': {events: 'bs', handler: 'onBeforeShowDialogConfirmDelete'}},
 		{'defaultHandler': 'defaultAction'}
 	], cora.Controller);

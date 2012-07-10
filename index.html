@@ -65,7 +65,7 @@
 					<label id="student-form-lastname-label" for="lastName">Last name</label>
 					<input id="student-form-lastname" type="text" name="lastName" />
 					<div class="ui-grid-a">
-						<div class="ui-block-a"><a data-role="button" data-direction="reverse" href="javascript:history.back();">Cancel</a></div>
+						<div class="ui-block-a"><a id="student-form-button-cancel" data-role="button" data-direction="reverse" href="javascript:history.back();">Cancel</a></div>
 						<div class="ui-block-b"><input class="ui-block-b" type="submit" value="Save" /></div>
 					</div><!-- /ui-grid-a -->
 				</form>
@@ -151,6 +151,8 @@
 			<div data-role="content">
 				<ul data-role="listview">
 					<li><a href="#options-export">Export notes</a></li>
+					<li><a href="#options-clear-data">Clear data</a></li>
+					<li><a href="#options-manage-tags">Manage tags</a></li>
 					<li><a href="#options-about">About Cora</a></li>
 				</ul>
 			</div><!-- /content -->
@@ -160,7 +162,7 @@
 		<!-- OPTIONS EXPORT -->
 		<div id="options-export" data-role="page">
 			<div data-role="header">
-				<h1>Export Notes</h1>
+				<h1>Export notes</h1>
 				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
@@ -176,7 +178,7 @@
 		<!-- OPTIONS EXPORT DATA -->
 		<div id="options-export-data" data-role="page">
 			<div data-role="header">
-				<h1>Export Data</h1>
+				<h1>Export data</h1>
 				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
@@ -189,6 +191,98 @@
 		</div><!-- /page -->
 		<!-- /OPTIONS EXPORT -->
 
+		<!-- OPTIONS CLEAR DATA -->
+		<div id="options-clear-data" data-role="page">
+			<div data-role="header">
+				<h1>Clear data</h1>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<ul data-role="listview">
+					<li><a href="#options-clear-data-all">Clear all data</a></li>
+					<li><a href="#options-clear-data-notes">Clear notes</a></li>
+					<li><a href="#options-clear-data-tags">Clear tags</a></li>
+				</ul>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS CLEAR DATA -->
+
+		<!-- OPTIONS CLEAR DATA ALL -->
+		<div id="options-clear-data-all" data-role="page">
+			<div data-role="header">
+				<h1>Clear all data</h1>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
+				<a class="ui-btn-right" data-icon="back" data-iconpos="notext" data-direction="reverse" href="#options-clear-data">Clear data</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<p>Are you sure you want to clear all the data? This action cannot be undone.</p>
+				<div><a id="options-clear-data-all-button-confirm" data-role="button" data-direction="reverse" href="javascript:history.back();">Clear all data</a></div>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS CLEAR DATA ALL -->	
+
+		<!-- OPTIONS CLEAR DATA NOTES -->
+		<div id="options-clear-data-notes" data-role="page">
+			<div data-role="header">
+				<h1>Clear notes</h1>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
+				<a class="ui-btn-right" data-icon="back" data-iconpos="notext" data-direction="reverse" href="#options-clear-data">Clear data</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<p>Are you sure you want to clear all notes? This action cannot be undone.</p>
+				<div><a id="options-clear-data-notes-button-confirm" data-role="button" data-direction="reverse" href="javascript:history.back();">Clear notes</a></div>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS CLEAR DATA NOTES -->		
+
+		<!-- OPTIONS CLEAR DATA TAGS -->
+		<div id="options-clear-data-tags" data-role="page">
+			<div data-role="header">
+				<h1>Clear tags</h1>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
+				<a class="ui-btn-right" data-icon="back" data-iconpos="notext" data-direction="reverse" href="#options-clear-data">Clear data</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<p>Are you sure you want to clear all tags? This action cannot be undone.</p>
+				<div><a id="options-clear-data-tags-button-confirm" data-role="button" data-direction="reverse" href="javascript:history.back();">Clear tags</a></div>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS CLEAR DATA TAGS -->	
+
+		<!-- OPTIONS MANAGE TAGS -->
+		<div id="options-manage-tags" data-role="page">
+			<div data-role="header">
+				<h1>Manage tags</h1>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<ul data-role="listview" data-filter="true">
+				</ul>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS MANAGE TAGS -->
+
+		<!-- OPTIONS MANAGE TAGS VIEW -->
+		<div id="options-manage-tags-view" data-role="page">
+			<div data-role="header">
+				<h1>View tag</h1>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
+				<a class="ui-btn-right" data-icon="back" data-iconpos="notext" data-direction="reverse" href="#options-manage-tags">Manage tags</a>
+			</div><!-- /header -->
+			<div data-role="content">
+				<form id="options-manage-tags-form" data-direction="reverse" action="#options-manage-tags-form" method="post">
+					<input id="options-manage-tags-form-tag-id" type="hidden" name="tag-id" />
+					<label id="options-manage-tags-form-tag-name-label" for="tagName">Tag name</label>
+					<input id="options-manage-tags-form-tag-name" type="text" name="tagName" />
+					<div class="ui-grid-a">
+						<div class="ui-block-a"><a id="options-managa-tags-form-button-back" data-role="button" data-direction="reverse" data-direction="reverse" href="">Delete</a></div>
+						<div class="ui-block-b"><input type="submit" value="Save" /></div>
+					</div><!-- /ui-grid-a -->					
+				</form>
+			</div><!-- /content -->
+		</div><!-- /page -->
+		<!-- /OPTIONS MANAGE TAGS VIEW -->
+		
 		<!-- OPTIONS ABOUT -->
 		<div id="options-about" data-role="page">
 			<div data-role="header">
