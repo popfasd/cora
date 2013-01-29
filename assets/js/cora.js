@@ -451,7 +451,7 @@ cora.Controller = {
 	 */
 	onShowHome: function ( type, match, ui)
 	{
-        if ($('#home').attr('data-cora-clean') == 'true')
+        if ($('#home').data('cora-clean') === true)
         {
             console.log('not redrawing #home, nothing changed');
             return;
@@ -503,7 +503,7 @@ cora.Controller = {
 			$('#home div[data-role="content"] > ul').html(html);
 			$('#home div[data-role="content"] > ul').listview('refresh');
 		});
-        $('#home').attr('data-cora-clean', 'true');
+        $('#home').data('cora-clean', true);
 	},
 	/**
 	 * #student-form
@@ -568,8 +568,8 @@ cora.Controller = {
 					student.firstName = firstName;
 					student.lastName = lastName;
 					persistence.flush(function () {
-                        $('#student').attr('data-cora-clean', 'false');
-                        $('#home').attr('data-cora-clean', 'false');
+                        $('#student').data('cora-clean', false);
+                        $('#home').data('cora-clean', false);
 						$.mobile.changePage('#student?sid='+student.id, {
 							reverse: true,
 							changeHash: false
@@ -581,7 +581,7 @@ cora.Controller = {
 			{
 				var student = cora.createStudent(firstName, lastName);
 				persistence.flush(function () {
-                    $('#home').attr('data-cora-clean', 'false');
+                    $('#home').data('cora-clean', false);
 					$.mobile.changePage('#student?sid='+student.id, {
 						reverse: true,
 						changeHash: false
@@ -605,7 +605,7 @@ cora.Controller = {
 		$('#student-button-delete').click(function (e) {
 			e.preventDefault();
 			e.stopImmediatePropagation();
-			var studentId = $('#student').attr('data-cora-student-id');
+			var studentId = $('#student').data('cora-student-id');
 			if (typeof studentId !== 'undefined')
 			{
 				$.mobile.changePage('#dialog-confirm-delete?sid='+studentId, {
@@ -617,7 +617,7 @@ cora.Controller = {
 			return false;
 		});
 		var studentId = cora.Router.getParams(match[1]).sid;
-        if ($('#student').attr('data-cora-student-id') == studentId && $('#student').attr('data-cora-clean') === 'true')
+        if ($('#student').data('cora-student-id') === studentId && $('#student').data('cora-clean') === true)
         {
             console.log('not redrawing #student, same student requested');
             return;
@@ -629,7 +629,7 @@ cora.Controller = {
 			cora.getStudentById(studentId, function (student) {
 				if (student !== null)
 				{
-					$('#student').attr('data-cora-student-id', student.id);
+					$('#student').data('cora-student-id', student.id);
 					$('#student-button-edit').attr('href', '#student-form?sid='+student.id);
 					$('#student div[data-role="header"] > h1').html(
 						student.firstName+' '+student.lastName
@@ -669,7 +669,7 @@ cora.Controller = {
 							$('#student div[data-role="content"] #student-notes ul').listview();
 						}
 					});
-                    $('#student').attr('data-cora-clean', 'true');
+                    $('#student').data('cora-clean', true);
 				}
 				else
 				{
@@ -869,7 +869,7 @@ cora.Controller = {
 											// so we create a new entity for it
 											tag = cora.createTag(tname);
                                             tag.active = true;
-                                            $('#options-manage-tags').attr('data-cora-clean', 'false');
+                                            $('#options-manage-tags').data('cora-clean', false);
 										}
 										// finally we add it to the tag
 										note.tags.add(tag);
@@ -936,14 +936,14 @@ cora.Controller = {
 									if (typeof tag === 'undefined')
 									{
 										tag = cora.createTag(tname);
-                                        $('#options-manage-tags').attr('data-cora-clean', 'false');
+                                        $('#options-manage-tags').data('cora-clean', false);
 										
 									}
 									note.tags.add(tag);
 								}
 							}
 							cora.persistence.flush(function () {
-                                $('#student').attr('data-cora-clean', 'false');
+                                $('#student').data('cora-clean', false);
 								$.mobile.changePage('#student?sid='+student.id,{reverse: true});
 							});
 						});
@@ -975,8 +975,8 @@ cora.Controller = {
 		$('#note-button-delete').click(function (e) {
 			e.preventDefault();
 			e.stopImmediatePropagation();
-			var noteId = $('#note').attr('data-cora-note-id');
-			var studentId = $('#note').attr('data-cora-student-id');
+			var noteId = $('#note').data('cora-note-id');
+			var studentId = $('#note').data('cora-student-id');
 			if (typeof noteId !== 'undefined' && noteId != '')
 			{
 				$.mobile.changePage('#dialog-confirm-delete?nid='+noteId+'&sid='+studentId, {
@@ -997,8 +997,8 @@ cora.Controller = {
 			cora.getNoteById(noteId, function (note) {
 				if (note !== null)
 				{
-					$('#note').attr('data-cora-note-id', note.id);
-					$('#note').attr('data-cora-student-id', student.id);
+					$('#note').data('cora-note-id', note.id);
+					$('#note').data('cora-student-id', student.id);
 					$('#note p.note-student').html(
 						student.firstName+' '+student.lastName
 					);
@@ -1043,12 +1043,12 @@ cora.Controller = {
 		var studentId = params.sid;
 		if (typeof noteId !== 'undefined')
 		{
-			$('#dialog-confirm-delete-button-delete').attr('data-cora-note-id', noteId);
-			$('#dialog-confirm-delete-button-delete').attr('data-cora-student-id', studentId);
+			$('#dialog-confirm-delete-button-delete').data('cora-note-id', noteId);
+			$('#dialog-confirm-delete-button-delete').data('cora-student-id', studentId);
 			$('#dialog-confirm-delete-button-cancel').attr('href', '#note?nid='+noteId+'&sid='+studentId);
 			$('#dialog-confirm-delete-button-delete').click(function (e) {
-				var noteId = $(this).attr('data-cora-note-id');
-				var studentId = $(this).attr('data-cora-student-id');
+				var noteId = $(this).data('cora-note-id');
+				var studentId = $(this).data('cora-student-id');
 				e.preventDefault();
 				e.stopImmediatePropagation();
 				cora.getNoteById(noteId, function (note) {
@@ -1066,16 +1066,16 @@ cora.Controller = {
 		}
 		else if (typeof studentId !== 'undefined')
 		{
-			$('#dialog-confirm-delete-button-delete').attr('data-cora-student-id', studentId);
+			$('#dialog-confirm-delete-button-delete').data('cora-student-id', studentId);
 			$('#dialog-confirm-delete-button-cancel').attr('href', '#student?sid='+studentId);
 			$('#dialog-confirm-delete-button-delete').click(function (e) {
-				var studentId = $(this).attr('data-cora-student-id');
+				var studentId = $(this).data('cora-student-id');
 				e.preventDefault();
 				e.stopImmediatePropagation();
 				cora.getStudentById(studentId, function (student) {
 					cora.removeStudent(student);
 					persistence.flush(function () {
-                        $('#home').attr('data-cora-clean', 'false');
+                        $('#home').data('cora-clean', false);
 						$.mobile.changePage('#home', {
 							transition: 'pop',
 							reverse: true,
@@ -1135,7 +1135,7 @@ cora.Controller = {
 	 */
 	onBeforeShowManageTags: function ( type, match, ui )
 	{
-        if ($('#options-manage-tags').attr('data-cora-clean') === 'true')
+        if ($('#options-manage-tags').data('cora-clean') === true)
         {
             console.log('not redrawing #options-manage-tags, nothing changed');
             return;
@@ -1150,7 +1150,7 @@ cora.Controller = {
 				);
 			}
 			$('#options-manage-tags ul').listview('refresh');
-            $('#options-manage-tags').attr('data-cora-clean', 'true');
+            $('#options-manage-tags').data('cora-clean', true);
 		});
 	},
 	/**
@@ -1207,7 +1207,7 @@ cora.Controller = {
             cora.getTagById($(this).attr('href').slice(1), function (t) {
                 cora.removeTag(t);
                 persistence.flush(function () {
-                    $('#options-manage-tags').attr('data-cora-clean', 'false');
+                    $('#options-manage-tags').data('cora-clean', false);
                     $.mobile.changePage('#options-manage-tags', {
                         transition: 'slide',
                         reverse: true,
@@ -1243,7 +1243,7 @@ cora.Controller = {
 		// bind to submit
 		$('#options-reports-form').submit(function ( e ){       
             var tags = $('#options-reports-form-tags').val();
-            $('#options-reports-results').attr('data-cora-tags', tags);
+            $('#options-reports-results').data('cora-tags', tags);
             $('#options-reports-form-tags').val('');
             $('#options-reports-results-data').empty();
             cora.Controller.onSubmitReportsForm(e);
@@ -1256,7 +1256,7 @@ cora.Controller = {
     {
         e.preventDefault();
         e.stopImmediatePropagation(); 
-		var formTags = $('#options-reports-results').attr('data-cora-tags');
+		var formTags = $('#options-reports-results').data('cora-tags');
         formTags = formTags.split(',');
         // reset content
         $('#options-reports-results-criteria').html(
@@ -1265,7 +1265,7 @@ cora.Controller = {
         $('#options-reports-results-refine-button').click(function (e) {
             e.preventDefault();
 			e.stopImmediatePropagation();
-            $('#options-reports-form-tags').val($('#options-reports-results').attr('data-cora-tags'));
+            $('#options-reports-form-tags').val($('#options-reports-results').data('cora-tags'));
             $.mobile.changePage('#options-reports', {
                 reverse: true,
                 changeHash: false
