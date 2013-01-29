@@ -887,6 +887,7 @@ cora.Controller = {
                                     }
                                 }
 								cora.persistence.flush(function () {
+                                    $('#student').data('cora.clean', false);
 									note.fetch('student', function (student) {
 										$.mobile.changePage('#note?sid='+student.id+'&nid='+note.id, {
 											reverse: true,
