@@ -17,18 +17,18 @@
 		 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 		 * GNU General Public License for more details.
 		 * 
-		 * http://fasdoutreach.ca/~cora/LICENSE.TXT
+		 * http://cora.fasdoutreach.ca/LICENSE.txt
 		-->
 		<title>Cora</title>
 		<meta name="Content-Type" content="text/html" />
 		<meta name="Charset" content="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" type="text/css" href="assets/themes/jquery.mobile-1.1.0.min.css" />
+		<link rel="stylesheet" type="text/css" href="assets/themes/jquery.mobile-1.2.0.min.css" />
 		<link rel="stylesheet" type="text/css" href="assets/themes/cora.min.css" />
 		<link rel="stylesheet" type="text/css" href="assets/css/main.css" />
 		<script type="text/javascript" src="assets/js/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="assets/js/jquery.mobile.router.min.js"></script>
-		<script type="text/javascript" src="assets/js/jquery.mobile-1.1.0.min.js"></script>
+		<script type="text/javascript" src="assets/js/jquery.mobile-1.2.0.min.js"></script>
 		<script type="text/javascript" src="assets/js/persistence.js"></script>
 		<script type="text/javascript" src="assets/js/persistence.store.sql.js"></script>
 		<script type="text/javascript" src="assets/js/persistence.store.websql.js"></script>
@@ -47,6 +47,7 @@
 			<div data-role="content">
 				<ul data-role="listview" data-filter="true">
 				</ul>
+                <p id="home-disclaimer">DISCLAIMER: The following application was designed to assist you in your work with students. Your use of this app should be in compliance with the Freedom of Information and Privacy policies of your jurisdiction</p>
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /HOME -->
@@ -62,10 +63,10 @@
 					<input id="student-form-student-id" type="hidden" name="student" />
 					<label id="student-form-firstname-label" for="firstName">First name</label>
 					<input id="student-form-firstname" type="text" name="firstName" />
-					<label id="student-form-lastname-label" for="lastName">Last name</label>
-					<input id="student-form-lastname" type="text" name="lastName" />
+					<label id="student-form-lastname-label" for="lastName">First initial of last name</label>
+					<input id="student-form-lastname" type="text" name="lastName" maxlength="1" />
 					<div class="ui-grid-a">
-						<div class="ui-block-a"><a id="student-form-button-cancel" data-role="button" data-direction="reverse" href="javascript:history.back();">Cancel</a></div>
+						<div class="ui-block-a"><a id="student-form-button-cancel" data-role="button" data-direction="reverse" href="#student">Cancel</a></div>
 						<div class="ui-block-b"><input class="ui-block-b" type="submit" value="Save" /></div>
 					</div><!-- /ui-grid-a -->
 				</form>
@@ -103,16 +104,16 @@
 					<input id="note-form-student-id" type="hidden" name="student-id" />
 					<label id="note-form-student-name-label" for="studentName">Student's name</label>
 					<input id="note-form-student-name" type="text" name="studentName" />
+					<label id="note-form-content-label" for="content">Note</label>
+					<textarea id="note-form-content" name="content"></textarea>
 					<label id="note-form-tags-label" for="tags">Tags (optional)</label>
 					<input id="note-form-tags" type="text" name="tags" />
-					<div id="note-form-tags-suggestions">
+					<div id="note-form-tags-suggestions" class="tag-suggestions">
 						<ul data-role="listview">
 						</ul>
 					</div>
-					<label id="note-form-content-label" for="content">Note</label>
-					<textarea id="note-form-content" name="content"></textarea>
 					<div class="ui-grid-a">
-						<div class="ui-block-a"><a id="note-form-button-back" data-role="button" data-direction="reverse" data-direction="reverse" href="">Cancel</a></div>
+						<div class="ui-block-a"><a id="note-form-button-back" data-role="button" data-direction="reverse" data-direction="reverse" href="#student">Cancel</a></div>
 						<div class="ui-block-b"><input type="submit" value="Save" /></div>
 					</div><!-- /ui-grid-a -->
 				</form>
@@ -134,7 +135,7 @@
 				</div>
 				<p class="note-content"></p>
 				<div class="ui-grid-b">
-					<div class="ui-block-a"><a id="note-button-back" data-role="button" data-direction="reverse" href="javascript:history.back();">Back</a></div>
+					<div class="ui-block-a"><a id="note-button-back" data-role="button" data-direction="reverse" href="#student">Back</a></div>
 					<div class="ui-block-b"><a id="note-button-edit" data-role="button" direction="forward" href="#note-form">Edit</a></div>
 					<div class="ui-block-c"><a id="note-button-delete" data-role="button" href="#">Delete</a></div>
 				</div>
@@ -150,8 +151,9 @@
 			</div><!-- /header -->
 			<div data-role="content">
 				<ul data-role="listview">
-					<li><a href="#options-export">Export notes</a></li>
-					<li><a href="#options-clear-data">Clear data</a></li>
+					<!-- <li><a href="#options-export">Export notes</a></li> -->
+                    <li><a href="#options-reports">Reports</a></li>
+					<!-- <li><a href="#options-clear-data">Clear data</a></li> -->
 					<li><a href="#options-manage-tags">Manage tags</a></li>
 					<li><a href="#options-about">About Cora</a></li>
 				</ul>
@@ -168,7 +170,7 @@
 			<div data-role="content">
 				<p>The export feature allows you to save your notes to a format that is more suitable while compiling reports.</p>
 				<div class="ui-grid-a">
-					<div class="ui-block-a"><a id="options-export-button-back" data-role="button" data-direction="reverse" href="javascript:history.back();">Back</a></div>
+					<div class="ui-block-a"><a id="options-export-button-back" data-role="button" data-direction="reverse" href="#options">Back</a></div>
 					<div class="ui-block-b"><a id="options-export-button-export" data-role="button" href="#options-export-data">Export</a></div>
 				</div>
 			</div><!-- /content -->
@@ -190,12 +192,50 @@
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /OPTIONS EXPORT -->
+        
+        <!-- OPTIONS REPORTS -->
+        <div id="options-reports" data-role="page">
+            <div data-role="header">
+                <h1>Reports</h1>
+                <a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
+            </div><!-- /header -->
+            <div data-role="content">
+                <form id="options-reports-form" action="#options-reports-results" method="post">
+                    <label id="options-reports-form-tags-label" for="tags">View all notes tagged with</label>
+                    <input id="options-reports-form-tags" type="text" name="tags" />
+					<div id="options-reports-form-tags-suggestions" class="tag-suggestions">
+						<ul data-role="listview">
+						</ul>
+					</div>
+					<div class="ui-grid-a">
+						<div class="ui-block-a"><a id="options-reports-form-button-back" data-role="button" data-direction="reverse" href="#options">Back</a></div>
+						<div class="ui-block-b"><input type="submit" value="Generate" /></div>
+					</div><!-- /ui-grid-a -->
+                </form>
+            </div><!-- /content -->
+        </div><!-- /page -->
+        <!-- /OPTIONS REPORTS -->
+        
+        <!-- OPTIONS REPORTS RESULTS -->
+        <div id="options-reports-results" data-role="page">
+            <div data-role="header">
+                <h1>Report Results</h1>
+                <a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
+                <a class="ui-btn-right" data-icon="back" data-iconpos="notext" data-direction="reverse" href="#options-reports">Back</a>
+            </div><!-- /header -->
+            <div data-role="content">
+                <p id="options-reports-results-criteria"></p>
+                <div><a id="options-reports-results-refine-button" data-role="button" data-direction="reverse" href="#options-reports">Refine</a></div>
+                <div id="options-reports-results-data"></div>
+            </div><!-- /content -->
+        </div><!-- /page -->
+        <!-- /OPTIONS REPORTS RESULTS -->
 
 		<!-- OPTIONS CLEAR DATA -->
 		<div id="options-clear-data" data-role="page">
 			<div data-role="header">
 				<h1>Clear data</h1>
-				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<ul data-role="listview">
@@ -216,7 +256,7 @@
 			</div><!-- /header -->
 			<div data-role="content">
 				<p>Are you sure you want to clear all the data? This action cannot be undone.</p>
-				<div><a id="options-clear-data-all-button-confirm" data-role="button" data-direction="reverse" href="javascript:history.back();">Clear all data</a></div>
+				<div><a id="options-clear-data-all-button-confirm" data-role="button" data-direction="reverse" href="#options-clear-data">Clear all data</a></div>
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /OPTIONS CLEAR DATA ALL -->	
@@ -230,7 +270,7 @@
 			</div><!-- /header -->
 			<div data-role="content">
 				<p>Are you sure you want to clear all notes? This action cannot be undone.</p>
-				<div><a id="options-clear-data-notes-button-confirm" data-role="button" data-direction="reverse" href="javascript:history.back();">Clear notes</a></div>
+				<div><a id="options-clear-data-notes-button-confirm" data-role="button" data-direction="reverse" href="#options-clear-data">Clear notes</a></div>
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /OPTIONS CLEAR DATA NOTES -->		
@@ -244,7 +284,7 @@
 			</div><!-- /header -->
 			<div data-role="content">
 				<p>Are you sure you want to clear all tags? This action cannot be undone.</p>
-				<div><a id="options-clear-data-tags-button-confirm" data-role="button" data-direction="reverse" href="javascript:history.back();">Clear tags</a></div>
+				<div><a id="options-clear-data-tags-button-confirm" data-role="button" data-direction="reverse" href="#options-clear-data">Clear tags</a></div>
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /OPTIONS CLEAR DATA TAGS -->	
@@ -253,7 +293,7 @@
 		<div id="options-manage-tags" data-role="page">
 			<div data-role="header">
 				<h1>Manage tags</h1>
-				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<ul data-role="listview" data-filter="true">
@@ -305,14 +345,14 @@
 		<div id="options-about" data-role="page">
 			<div data-role="header">
 				<h1>About Cora</h1>
-				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="javascript:history.back();">Options</a>
+				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<div id="options-about-logo"><img src="assets/images/logo.png" /></div>
 				<p>Copyright &copy; 2012 Provincial Outreach Program for Fetal Alcohol Spectrum Disorder (POPFASD).</p>
 				<p>Concept by Stacey Wakabayashi. Design by Stacey Wakabayashi and Matt Ferris. Development by Matt Ferris.</p>
-				<p>For support, please visit our website at <a href="http://www.fadoutreach.ca/cora/support">www.fasdoutreach.ca/cora/support</a>.</p>
-				<p><a id="options-export-button-back" data-role="button" data-direction="reverse" href="javascript:history.back();">Back</a></p>
+				<p>For support, please visit our website at http://cora.fasdoutreach.ca/.</p>
+				<p><a id="options-about-button-back" data-role="button" data-direction="reverse" href="#options">Back</a></p>
 			</div><!-- /content -->
 		</div><!-- /page -->
 		<!-- /OPTIONS ABOUT -->

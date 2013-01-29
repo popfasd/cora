@@ -13,12 +13,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
- * http://fasdoutreach.ca/~cora/LICENSE.TXT
+ * http://cora.fasdoutreach.ca/LICENSE.txt
  *
  * @author Matt Ferris <mferris@sd57.bc.ca>
- * @version alpha
  */
 
+/*
+ * Quiet all console.log messages
+ */
+console.log = function () {};
+ 
 /*
  * Add trim to String for browsers that don't yet use EMCAScript5
  */
@@ -367,7 +371,7 @@ cora.getAllTags = function ( callback )
  * Suggest tags to the user based on what they've type so far
  */
 cora.suggestTagsTimeout = null;
-cora.suggestTags = function (inputValue)
+cora.suggestTags = function (inputValue, formId)
 {
 	var inTags = inputValue.split(',');
 	for (var i=0; i<inTags.length; i++) inTags[i] = inTags[i].trim();
@@ -375,7 +379,7 @@ cora.suggestTags = function (inputValue)
 	if (tag != '')
 	{
 		cora.Tag.all().filter('name', 'like', tag+'%').list(function (tags) {
-			$('#note-form-tags-suggestions ul').empty();
+			$(formId+'-tags-suggestions ul').empty();
 			var numSuggestions = 0;
 			var maxSuggestions = 5;
 			for (var i=0; i<tags.length; i++)
@@ -397,7 +401,7 @@ cora.suggestTags = function (inputValue)
 					if (numSuggestions < maxSuggestions)
 					{
 						numSuggestions++;
-						$('#note-form-tags-suggestions ul').append(
+						$(formId+'-tags-suggestions ul').append(
 							'<li><a href="#">'+tags[i].name+'</li>'
 						);
 					}
@@ -408,19 +412,19 @@ cora.suggestTags = function (inputValue)
 				}
 			}
 			/*$('#note-form-tags-suggestions ul').listview('refresh');*/
-			$('#note-form-tags-suggestions ul').show();
+			$(formId+'-tags-suggestions ul').show();
 			cora.suggestTagsTimeout = null;
-			$('#note-form-tags-suggestions a').click(function (e) {
+			$(formId+'-tags-suggestions a').click(function (e) {
 				e.preventDefault();
 				e.stopImmediatePropagation();
 				var tag = $(this).html();
-				var taglist = $('#note-form-tags').attr('value');
+				var taglist = $(formId+'-tags').attr('value');
 				taglist = taglist.split(',');
 				for (var i=0; i<taglist.length; i++) taglist[i] = taglist[i].trim();
 				taglist.pop();
 				taglist.push(tag);
-				$('#note-form-tags').attr('value', taglist.join(', '));
-				$('#note-form-tags-suggestions ul').hide();
+				$(formId+'-tags').attr('value', taglist.join(', '));
+				$(formId+'-tags-suggestions ul').hide();
 			});
 		});
 	}
@@ -447,6 +451,12 @@ cora.Controller = {
 	 */
 	onShowHome: function ( type, match, ui)
 	{
+        if ($('#home').attr('data-cora-clean') == 'true')
+        {
+            console.log('not redrawing #home, nothing changed');
+            return;
+        }
+        
 		$('#home form.ui-listview-filter input[data-type="search"]').attr('value', '');
 		$('#home form.ui-listview-filter a.ui-input-clear').addClass('ui-input-clear-hidden');
 		cora.getAllStudents(function (students) {
@@ -455,6 +465,7 @@ cora.Controller = {
 			 */
 			if (students.length !== 0)
 			{
+                $('#home-disclaimer').hide();
 				var student = students[0];
 				if (student.firstName == '' || student.lastName === '' || student.lastName.length < 1)
 				{
@@ -492,6 +503,7 @@ cora.Controller = {
 			$('#home div[data-role="content"] > ul').html(html);
 			$('#home div[data-role="content"] > ul').listview('refresh');
 		});
+        $('#home').attr('data-cora-clean', 'true');
 	},
 	/**
 	 * #student-form
@@ -556,6 +568,8 @@ cora.Controller = {
 					student.firstName = firstName;
 					student.lastName = lastName;
 					persistence.flush(function () {
+                        $('#student').attr('data-cora-clean', 'false');
+                        $('#home').attr('data-cora-clean', 'false');
 						$.mobile.changePage('#student?sid='+student.id, {
 							reverse: true,
 							changeHash: false
@@ -567,6 +581,7 @@ cora.Controller = {
 			{
 				var student = cora.createStudent(firstName, lastName);
 				persistence.flush(function () {
+                    $('#home').attr('data-cora-clean', 'false');
 					$.mobile.changePage('#student?sid='+student.id, {
 						reverse: true,
 						changeHash: false
@@ -586,7 +601,7 @@ cora.Controller = {
 	 * #student
 	 */
 	onBeforeShowStudent: function ( type, match, ui )
-	{
+	{        
 		$('#student-button-delete').click(function (e) {
 			e.preventDefault();
 			e.stopImmediatePropagation();
@@ -601,9 +616,14 @@ cora.Controller = {
 			}
 			return false;
 		});
+		var studentId = cora.Router.getParams(match[1]).sid;
+        if ($('#student').attr('data-cora-student-id') == studentId && $('#student').attr('data-cora-clean') === 'true')
+        {
+            console.log('not redrawing #student, same student requested');
+            return;
+        }
 		// reset content
 		$('#student div[data-role="content"] ul').empty();
-		var studentId = cora.Router.getParams(match[1]).sid;
 		if (typeof studentId !== 'undefined')
 		{
 			cora.getStudentById(studentId, function (student) {
@@ -649,6 +669,7 @@ cora.Controller = {
 							$('#student div[data-role="content"] #student-notes ul').listview();
 						}
 					});
+                    $('#student').attr('data-cora-clean', 'true');
 				}
 				else
 				{
@@ -670,53 +691,6 @@ cora.Controller = {
 		}
 	},
 	/**
-	 * delete student
-	 */
-	onDeleteStudent: function ( e )
-	{
-		e.preventDefault();
-		e.stopImmediatePropagation();
-		var studentId = $('#student').attr('data-cora-student-id');
-		if (typeof studentId !== 'undefined' && studentId != '')
-		{
-			cora.getStudentById(studentId, function (student) {
-				if (student !== null)
-				{
-					$('#dialog-confirm-delete-button-delete').click(function () {
-						student.notes.forEach(function (note) {
-							cora.removeNote(note);
-						});
-						cora.removeStudent(student);
-						persistence.flush(function () {
-							$.mobile.changePage('#home', {
-								transition: 'pop',
-								reverse: true,
-								changeHash: false
-							});
-						});
-					});
-					$('#dialog-confirm-delete-button-cancel').attr('href',
-						'#student?sid='+student.id
-					);
-					$.mobile.changePage('#dialog-confirm-delete', {
-						transition: 'pop',
-						reverse: true,
-						changeHash: false
-					});
-				}
-				else
-				{
-					$.mobile.changePage('#home', {
-						transition: 'pop',
-						reverse: true,
-						changeHash: false
-					});
-				}
-			});
-		}
-		return false;
-	},
-	/**
 	 * #note-form
 	 */
 	onBeforeShowNoteForm: function ( type, match, ui )
@@ -731,7 +705,7 @@ cora.Controller = {
 			{
 				clearTimeout(cora.suggestTagsTimeout);
 			}
-			cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'")', 200);
+			cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'","#note-form")', 200);
 		});
 		$('#note-form *').focusin(function () {
 			$('#note-form-tags-suggestions ul').hide();
@@ -800,6 +774,7 @@ cora.Controller = {
 						);
 						$('#note-form-student-name').attr('disabled', 'disabled');
 						$('#note-form-content').attr('value', note.content);
+						$('#note-form-button-back').attr('href', '#student?sid='+student.id);
 						note.tags.list(function (tags) {
 							var taglist = [];
 							for (var i=0; i<tags.length; i++) taglist.push(tags[i].name);
@@ -844,6 +819,11 @@ cora.Controller = {
 						note.content = content;
 						cora.getAllTags(function (allTags) {
 							note.tags.list(function (noteTags) {
+                                // reset the active state of all the tags for the note
+                                for (var i=0; i<noteTags.length; i++)
+                                {
+                                    noteTags[i].active = false;
+                                }
 								formTags = formTags.split(',');
 								/*
 								 * TODO
@@ -854,7 +834,8 @@ cora.Controller = {
 								// loop through tags in the form
 								for (var i=0; i<formTags.length; i++)
 								{
-									if (formTags[1] == '') continue;
+                                    // skip empty tags
+									if (formTags[i] == '') continue;
 									var tname = formTags[i].trim();
 									var found = false;
 									// compare submitted tag with existing tags
@@ -863,7 +844,7 @@ cora.Controller = {
 										if (noteTags[j].name === tname)
 										{
 											// tag already attached to the note
-											found = true;
+											found = noteTags[j].active = true;
 											break;
 										}
 									}
@@ -874,11 +855,11 @@ cora.Controller = {
 										// compare this new tag with all existing tags
 										for (var j=0; j<allTags.length; j++)
 										{
-											if (allTags[i].name === tname)
+											if (allTags[j].name === tname)
 											{
 												// this tag exists as an entity
 												found = true;
-												tag = allTags[i];
+												tag = allTags[j];
 												break;
 											}
 										}
@@ -887,11 +868,24 @@ cora.Controller = {
 											// submitted tag doesn't exist as an entity...
 											// so we create a new entity for it
 											tag = cora.createTag(tname);
+                                            tag.active = true;
+                                            $('#options-manage-tags').attr('data-cora-clean', 'false');
 										}
 										// finally we add it to the tag
 										note.tags.add(tag);
 									}
 								}
+                                // now we need to remove deleted tags
+                                for (var i=0; i<noteTags.length; i++)
+                                {
+                                    console.log('notetag: '+noteTags[i].name+'.active = '+noteTags[i].active);
+                                    // tags that don't have an 'active' attribute or tags
+                                    // with 'active' set to false have been deleted
+                                    if (noteTags[i].active !== true)
+                                    {
+                                        note.tags.remove(noteTags[i]);
+                                    }
+                                }
 								cora.persistence.flush(function () {
 									note.fetch('student', function (student) {
 										$.mobile.changePage('#note?sid='+student.id+'&nid='+note.id, {
@@ -942,12 +936,14 @@ cora.Controller = {
 									if (typeof tag === 'undefined')
 									{
 										tag = cora.createTag(tname);
+                                        $('#options-manage-tags').attr('data-cora-clean', 'false');
 										
 									}
 									note.tags.add(tag);
 								}
 							}
 							cora.persistence.flush(function () {
+                                $('#student').attr('data-cora-clean', 'false');
 								$.mobile.changePage('#student?sid='+student.id,{reverse: true});
 							});
 						});
@@ -1079,6 +1075,7 @@ cora.Controller = {
 				cora.getStudentById(studentId, function (student) {
 					cora.removeStudent(student);
 					persistence.flush(function () {
+                        $('#home').attr('data-cora-clean', 'false');
 						$.mobile.changePage('#home', {
 							transition: 'pop',
 							reverse: true,
@@ -1138,6 +1135,11 @@ cora.Controller = {
 	 */
 	onBeforeShowManageTags: function ( type, match, ui )
 	{
+        if ($('#options-manage-tags').attr('data-cora-clean') === 'true')
+        {
+            console.log('not redrawing #options-manage-tags, nothing changed');
+            return;
+        }
 		$('#options-manage-tags ul').empty();
 		cora.getAllTags(function (tags) {
 			for (var t=0; t<tags.length; t++)
@@ -1148,6 +1150,7 @@ cora.Controller = {
 				);
 			}
 			$('#options-manage-tags ul').listview('refresh');
+            $('#options-manage-tags').attr('data-cora-clean', 'true');
 		});
 	},
 	/**
@@ -1197,13 +1200,131 @@ cora.Controller = {
 		var params = cora.Router.getParams(match[1]);
 		var tagId = params.tid;
 		$('#options-manage-tags-delete-button-cancel').attr('href', '#options-manage-tags-view?tid='+tagId);
-		$('#options-manage-tags-delete-button-delete').click(function () {
-			cora.removeTag(tagId);
+        $('#options-manage-tags-delete-button-delete').attr('href', '#'+tagId);
+		$('#options-manage-tags-delete-button-delete').click(function (e) {
+            e.preventDefault();
+			e.stopImmediatePropagation();
+            cora.getTagById($(this).attr('href').slice(1), function (t) {
+                cora.removeTag(t);
+                persistence.flush(function () {
+                    $('#options-manage-tags').attr('data-cora-clean', 'false');
+                    $.mobile.changePage('#options-manage-tags', {
+                        transition: 'slide',
+                        reverse: true,
+                        changeHash: true
+                    });
+                });
+            });
 		});
 		cora.getTagById(tagId, function ( tag ) {
 			$('#options-manage-tags-delete-tag-name').html('Tag: <i>'+tag.name+'</i>');
 		});
 	},
+    /**
+     * #options-reports
+     */
+    onBeforeShowReports: function ( type, match, ui )
+    {
+		// setup tag suggestions
+		$('#options-reports-form-tags-suggestions ul').empty();
+		$('#options-reports-form-tags').keyup(function (e) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			var inputValue = $(this).attr('value');
+		    if (cora.suggestTagsTimeout !== null)
+			{
+				clearTimeout(cora.suggestTagsTimeout);
+			}
+			cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'","#options-reports-form")', 200);
+		});
+		$('#options-reports-form *').focusin(function () {
+			$('#options-reports-form-tags-suggestions ul').hide();
+		});
+		// bind to submit
+		$('#options-reports-form').submit(function ( e ){       
+            var tags = $('#options-reports-form-tags').val();
+            $('#options-reports-results').attr('data-cora-tags', tags);
+            $('#options-reports-form-tags').val('');
+            $('#options-reports-results-data').empty();
+            cora.Controller.onSubmitReportsForm(e);
+        });
+    },
+    /**
+     * #options-reports-results
+     */
+    onSubmitReportsForm: function ( e )
+    {
+        e.preventDefault();
+        e.stopImmediatePropagation(); 
+		var formTags = $('#options-reports-results').attr('data-cora-tags');
+        formTags = formTags.split(',');
+        // reset content
+        $('#options-reports-results-criteria').html(
+            'Displaying all notes tagged with <i>'+formTags.join('</i> or <i>')+'</i>'
+        );
+        $('#options-reports-results-refine-button').click(function (e) {
+            e.preventDefault();
+			e.stopImmediatePropagation();
+            $('#options-reports-form-tags').val($('#options-reports-results').attr('data-cora-tags'));
+            $.mobile.changePage('#options-reports', {
+                reverse: true,
+                changeHash: false
+            });
+        });
+        var tagsqc = cora.Tag.all();
+        for (var i=0; i<formTags.length; i++)
+        {
+            var tagName = formTags[i];
+            if (tagName == '') continue
+            if (i === 0)
+            {
+                tagsqc = tagsqc.filter('name', '=', tagName);
+            }
+            else
+            {
+                tagsqc = tagsqc.and(new persistence.PropertyFilter('name', '=', tagName));
+            }
+        }
+        console.log('here');
+        tagsqc.list(function (tags) {
+            if (tags.length === 0)
+            {
+                $('#options-reports-results-data').html('<p><i>No matching notes found</i></p>');
+            }
+            for (var i=0; i<tags.length; i++)
+            {
+                var tag = tags[i];
+                tag.notes.prefetch('student').list(function (notes) {
+                    for (var j=0; j<notes.length; j++)
+                    {
+                        var note = notes[j];
+                        var studentNotes = $('#sid-'+note.student.id+' ul');
+                        if (studentNotes.length === 0)
+                        {
+                            $('#options-reports-results-data').append(
+                                '<div id="sid-'+note.student.id+'" data-role="collapsible" data-inset="false">'+
+                                '<h2>'+note.student.firstName+' '+note.student.lastName+'</h2>'+
+                                '<ul data-role="listview"></ul></div>'
+                            );
+                            var studentNotes = $('#sid-'+note.student.id+' ul');
+                            $('#sid-'+note.student.id).collapsible();
+                            studentNotes.listview();
+                        }
+                        studentNotes.append(
+                            '<li>'+
+                            '<p class="note-time">'+cora.Date(note.created).getNoteTimeAsString()+'</p>'+
+							'<p class="note-teaser">'+note.content+'</p></a></li>'
+                        );
+                        studentNotes.listview('refresh');
+                    }
+                });               
+            }
+            $.mobile.changePage('#options-reports-results', {
+                reverse: false,
+                changeHash: false
+            });
+        });
+    },
 };
 
 /**
@@ -1223,6 +1344,8 @@ cora.initialize = function ( callback, config )
 		{'#student([?].*)': {events: 'bs', handler: 'onBeforeShowStudent'}},
 		{'#note-form([?].*)': {events: 'bs', handler: 'onBeforeShowNoteForm'}},
 		{'#note([?].*)': {events: 'bs', handler: 'onBeforeShowNote'}},
+		{'#options-reports': {events: 'bs', handler: 'onBeforeShowReports'}},
+		{'#options-reports-results([?].*)': {events: 'bs', handler: 'onBeforeShowReportsResults'}},
 		{'#options-export-data': {events: 'bs', handler: 'onBeforeShowExportData'}},
 		{'#options-manage-tags$': {events: 'bs', handler: 'onBeforeShowManageTags'}},
 		{'#options-manage-tags-view([?].*)': {events: 'bs', handler: 'onBeforeShowManageTagsView'}},
