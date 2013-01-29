@@ -1260,7 +1260,7 @@ cora.Controller = {
         formTags = formTags.split(',');
         // reset content
         $('#options-reports-results-criteria').html(
-            'Displaying all notes tagged with <i>'+formTags.join('</i> or <i>')+'</i>'
+            'Displaying all notes tagged with <i>'+formTags.join('</i> and <i>')+'</i>'
         );
         $('#options-reports-results-refine-button').click(function (e) {
             e.preventDefault();
@@ -1285,7 +1285,6 @@ cora.Controller = {
                 tagsqc = tagsqc.and(new persistence.PropertyFilter('name', '=', tagName));
             }
         }
-        console.log('here');
         tagsqc.list(function (tags) {
             if (tags.length === 0)
             {
