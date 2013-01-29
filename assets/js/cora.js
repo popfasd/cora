@@ -1180,6 +1180,7 @@ cora.Controller = {
 			cora.getTagById(tagId, function (tag) {
 				tag.name = tagName;
 				cora.persistence.flush(function () {
+                    $('#options-manage-tags').data('cora-clean', false);
 					$.mobile.changePage('#options-manage-tags', {
 						reverse: true,
 						changeHash: false
