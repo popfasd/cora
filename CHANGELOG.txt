@@ -1,0 +1,13 @@
+Changelog
+=========
+
+1.1
+---
+
+* Fixed search criteria message on Report Results screen to "and" from "or" (tinyissue#136) - mf
+* Moved from storing data-cora-* values using jQuery.attr() to jQuery.data() - mf
+* Fixed tags screen not updating when renaming tag (tinyissue#130) - mf
+* Changed names of data() keys from cora-\* to cora.\* - mf
+* Fixed student screen not refreshing after editing note (tinyissue#140) - mf
+* Updated to jQuery 1.9 - mf
+* Implemented event locking to prevent crashes (tinyissue#149) - mf
