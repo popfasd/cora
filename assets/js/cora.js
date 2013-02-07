@@ -1391,4 +1391,35 @@ cora.initialize = function ( callback, config )
 	 * TODO: make this a one-time thing (during first-run)
 	 */
 	cora.persistence.schemaSync(callback);
+    /*
+     * Event locking system to prevent multiple clicks from
+     * overloading the framework - tinyissue#149
+     */
+    var eventLocker = function (e) {
+        if ($(document).data('cora.locked') === true)
+        {
+            console.log('locked');
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        else
+        {
+            console.log('locking');
+            $(this).data('cora.locked', true);
+            setTimeout(function () {
+                console.log('unlocking');
+                $(document).data('cora.locked', false);
+            }, 500);
+        }
+    };
+    if (document.addEventListener)
+    {
+        // modern browsers
+        document.addEventListener('click', eventLocker, true);
+    }
+    else
+    {
+        // ie8 and lower
+        document.attacheEvent('click', eventLocker);
+    }
 };
