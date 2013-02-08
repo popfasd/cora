@@ -4,6 +4,10 @@ Project
 Git Branching Model
 -------------------
 
+See [this post on nvie.com][1] for more about this model.
+
+[1]: http://nvie.com/posts/a-successful-git-branching-model
+
 The `master` branch is for tagged releases only. The `develop` branch is where
 all changes are merged into. A `release` branch is forked from `develop` to
 prepare a new release. Once the release is ready, the release branch is merged

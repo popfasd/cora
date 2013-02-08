@@ -308,17 +308,17 @@
 			<div data-role="header">
 				<h1>View tag</h1>
 				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
-				<a class="ui-btn-right" data-icon="back" data-iconpos="notext" data-direction="reverse" href="#options-manage-tags">Manage tags</a>
 			</div><!-- /header -->
 			<div data-role="content">
 				<form id="options-manage-tags-form" data-direction="reverse" action="#options-manage-tags-form" method="post">
 					<input id="options-manage-tags-form-tag-id" type="hidden" name="tag-id" />
 					<label id="options-manage-tags-form-tag-name-label" for="tagName">Tag name</label>
 					<input id="options-manage-tags-form-tag-name" type="text" name="tagName" />
-					<div class="ui-grid-a">
-						<div class="ui-block-a"><a id="options-manage-tags-form-button-delete" data-role="button" href="">Delete</a></div>
+					<div class="ui-grid-b">
+                        <div class="ui-block-a"><a id="options-manage-tags-form-button-back" data-role="button" data-direction="reverse" href="#options-manage-tags">Cancel</a></div>
 						<div class="ui-block-b"><input type="submit" value="Save" /></div>
-					</div><!-- /ui-grid-a -->					
+						<div class="ui-block-c"><a id="options-manage-tags-form-button-delete" data-role="button" href="">Delete</a></div>
+					</div><!-- /ui-grid-b -->					
 				</form>
 			</div><!-- /content -->
 		</div><!-- /page -->

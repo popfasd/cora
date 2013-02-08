@@ -11,3 +11,5 @@ Changelog
 * Fixed student screen not refreshing after editing note (tinyissue#140) - mf
 * Updated to jQuery 1.9 - mf
 * Implemented event locking to prevent crashes (tinyissue#149) - mf
+* Changed filter text on #home and #options-manage-tags (tinyissue#107) - mf
+* Changed buttons around on #options-manage-tags-view (tinyissue#37) - mf
