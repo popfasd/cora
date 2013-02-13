@@ -13,3 +13,5 @@ Changelog
 * Implemented event locking to prevent crashes (tinyissue#149) - mf
 * Changed filter text on #home and #options-manage-tags (tinyissue#107) - mf
 * Changed buttons around on #options-manage-tags-view (tinyissue#37) - mf
+* Disabled autocorrect on tag-suggestion-enabled fields - mf
+* New View objects and ControllerAction function to provide looser coupling to jQuery (tinyissue#121)- mf

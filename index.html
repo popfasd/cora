@@ -114,7 +114,7 @@
 						</ul>
 					</div>
 					<div class="ui-grid-a">
-						<div class="ui-block-a"><a id="note-form-button-back" data-role="button" data-direction="reverse" data-direction="reverse" href="#student">Cancel</a></div>
+						<div class="ui-block-a"><a id="note-form-button-back" data-role="button" data-rel="dialog" data-transition="pop" href="#dialog-confirm-cancel">Cancel</a></div>
 						<div class="ui-block-b"><input type="submit" value="Save" /></div>
 					</div><!-- /ui-grid-a -->
 				</form>
@@ -226,7 +226,7 @@
             </div><!-- /header -->
             <div data-role="content">
                 <p id="options-reports-results-criteria"></p>
-                <div><a id="options-reports-results-refine-button" data-role="button" data-direction="reverse" href="#options-reports">Refine</a></div>
+                <div><a id="options-reports-results-button-refine" data-role="button" data-direction="reverse" href="#options-reports">Refine</a></div>
                 <div id="options-reports-results-data"></div>
             </div><!-- /content -->
         </div><!-- /page -->
@@ -310,14 +310,14 @@
 				<a class="ui-btn-left" data-icon="gear" data-iconpos="notext" data-direction="reverse" href="#options">Options</a>
 			</div><!-- /header -->
 			<div data-role="content">
-				<form id="options-manage-tags-form" data-direction="reverse" action="#options-manage-tags-form" method="post">
-					<input id="options-manage-tags-form-tag-id" type="hidden" name="tag-id" />
-					<label id="options-manage-tags-form-tag-name-label" for="tagName">Tag name</label>
-					<input id="options-manage-tags-form-tag-name" type="text" name="tagName" />
+				<form id="options-manage-tags-view-form" data-direction="reverse" action="#options-manage-tags-view-form" method="post">
+					<input id="options-manage-tags-view-form-tag-id" type="hidden" name="tag-id" />
+					<label id="options-manage-tags-view-form-tag-name-label" for="tagName">Tag name</label>
+					<input id="options-manage-tags-view-form-tag-name" type="text" name="tagName" />
 					<div class="ui-grid-b">
-                        <div class="ui-block-a"><a id="options-manage-tags-form-button-back" data-role="button" data-direction="reverse" href="#options-manage-tags">Cancel</a></div>
+                        <div class="ui-block-a"><a id="options-manage-tags-view-form-button-back" data-role="button" data-direction="reverse" href="#options-manage-tags">Cancel</a></div>
 						<div class="ui-block-b"><input type="submit" value="Save" /></div>
-						<div class="ui-block-c"><a id="options-manage-tags-form-button-delete" data-role="button" href="">Delete</a></div>
+						<div class="ui-block-c"><a id="options-manage-tags-view-form-button-delete" data-role="button" href="">Delete</a></div>
 					</div><!-- /ui-grid-b -->					
 				</form>
 			</div><!-- /content -->
@@ -388,6 +388,18 @@
 				<div class="ui-grid-a">
 					<div class="ui-block-a"><a id="dialog-confirm-delete-button-delete" data-role="button" href="#">Delete</a></p></div>
 					<div class="ui-block-b"><a id="dialog-confirm-delete-button-cancel" data-role="button" href="#">Cancel</a></p></div>
+				</div>
+			</div><!-- /content -->
+		</div>
+		<div id="dialog-confirm-cancel" data-role="dialog" data-rel="dialog" data-transition="pop">
+			<div data-role="header">
+				<h1>Are you sure?</h1>
+			</div><!-- /header -->
+			<div data-role="content">
+				<p>Are you sure you want to cancel? You may lose any changes.</p>
+				<div class="ui-grid-a">
+					<div class="ui-block-a"><a id="dialog-confirm-cancel-button-no" data-role="button" href="#">No</a></p></div>
+					<div class="ui-block-b"><a id="dialog-confirm-cancel-button-yes" data-role="button" href="#">Yes</a></p></div>
 				</div>
 			</div><!-- /content -->
 		</div>

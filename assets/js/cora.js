@@ -21,7 +21,7 @@
 /*
  * Quiet all console.log messages
  */
-console.log = function () {};
+//console.log = function () {};
  
 /*
  * Add trim to String for browsers that don't yet use EMCAScript5
@@ -430,6 +430,187 @@ cora.suggestTags = function (inputValue, formId)
 	}
 };
 
+/*
+ * Exceptions
+ */
+cora.Exceptions = {
+    elementDoesntExist: function ( id ) {
+        throw {
+            name: 'ElementDoesntExistException',
+            message: 'No element exists with ID "'+id+'"'
+        }
+    },
+};
+
+/*
+ * View object
+ */
+cora.View = function (id, my) {
+    my = my || {};
+    var that = {};
+    
+    var jq = $('#'+id);
+    if (jq.length != 1)
+    {
+        cora.Exceptions.elementDoesntExist(id);
+    }
+    my.view = $(jq.get(0));
+    my.id = id;
+    
+    that.data = function ( name, value ) {
+        if (arguments.length == 1)
+        {
+            return my.view.data('cora.data.'+name);
+        }
+        else if (arguments.length == 2)
+        {
+            my.view.data('cora.data.'+name, value);
+            return that;
+        }
+        else
+        {
+            var data = {};
+            for (k in my.view.data())
+            {
+                if (k.indexOf('cora.data.') === 0)
+                {
+                    data[k.slice(10)] = my.view.data(k);
+                }
+            }
+            return data;
+        }
+    };
+    
+    that.clearData = function ( name ) {
+        if (!name) {
+            foreach (k in my.view.data())
+            {
+                if (k.indexOf('cora.data.') === 0)
+                {
+                    my.view.removeData(k);
+                }
+            }
+        }
+        else
+        {
+            my.view.removeData(k);
+        }
+        return that;
+    };
+    
+    that.getChild = function ( name ) {
+        var jq = $('#'+id+'-'+name);
+        if (jq.length != 1)
+        {
+            cora.Exceptions.elementDoesntExist();
+        }
+        return $(jq.get(0));
+    };
+    
+    that.getId = function () {
+        return my.id;
+    };
+    
+    that.getSelector = function () {
+        return '#'+my.id;
+    };
+    
+    that.find = function ( selector ) {
+        return my.view.find(selector);
+    };
+    
+    return that;
+};
+
+/*
+ * PageView
+ */
+cora.PageView = function ( name, my ) {
+    my = my || {};
+    var that = cora.View(name, my);
+
+    that.markDirty = function () {
+        my.view.data('cora.clean', false);
+    };
+    
+    that.markClean = function () {
+        my.view.data('cora.clean', true);
+    };
+    
+    that.isClean = function () {
+        var clean = my.view.data('cora.clean');
+        if (clean) return true;
+        else return false;
+    };
+    
+    return that;
+};
+
+/*
+ * DialogView
+ */
+cora.DialogView = function ( name, my ) {
+    my = my || {};
+    var that = cora.View('dialog-'+name, my);
+    
+    that.close = function () {
+        my.view.dialog('close');
+        return that;
+    };
+    
+    return that;
+};
+
+/*
+ * ControllerAction
+ */
+cora.ControllerAction = function ( type, match, ui, view, callback ) {
+    var that = {};
+    that.view = cora.PageView(view);
+    that.params = cora.Router.getParams(match[1]) || {};
+    callback.call(that);
+};
+
+/**
+ * Redirect to a different "page"
+ * @param {string} url
+ * @param {object} options
+ */
+cora.redirect = function ( url, options )
+{
+    options = options || {};
+    options.transition = options.transition || $.mobile.defaultPageTransition;
+    options.reverse = options.reverse || false;
+    options.changeHash = options.changeHash || true;
+
+    $.mobile.changePage(url, {
+        transition: options.transition,
+        reverse: options.reverse,
+        changeHash: options.changeHash
+    });
+};
+
+/**
+ * Show a dialog
+ * @param {cora.DialogView} dialog
+ * @param {object} options
+ */
+cora.showDialog = function ( dialog, options )
+{
+    options = options || {};
+    options.transition = options.transition || 'pop';
+    options.reverse = options.reverse || false;
+    options.changeHash = options.changeHash || false;
+    
+    var parts = [];
+    for (k in options.params)
+    {
+        parts.push(k+'='+options.params[k]);
+    }
+
+    cora.redirect(dialog.getSelector()+'?'+parts.join('&'), options);
+};
+
 /**
  * Flush object graph to database
  * @param {function} [callback] Callback function
@@ -449,350 +630,411 @@ cora.Controller = {
 	/**
 	 * #home
 	 */
-	onShowHome: function ( type, match, ui)
+	onShowHome: function ( type, match, ui )
 	{
-        if ($('#home').data('cora.clean') === true)
-        {
-            console.log('not redrawing #home, nothing changed');
-            return;
-        }
-        
-		$('#home form.ui-listview-filter input[data-type="search"]').attr('value', '');
-		$('#home form.ui-listview-filter a.ui-input-clear').addClass('ui-input-clear-hidden');
-		cora.getAllStudents(function (students) {
-			/*
-			 * Determine sort order of list
-			 */
-			if (students.length !== 0)
-			{
-                $('#home-disclaimer').hide();
-				var student = students[0];
-				if (student.firstName == '' || student.lastName === '' || student.lastName.length < 1)
-				{
-					students.sort(function (a, b) {
-						if (a.firstName > b.firstName)
-						{
-							return 1;
-						}
-						else if (a.firstName < b.firstName)
-						{
-							return -1;
-						}
-						else
-						{
-							return 0;
-						}
-					});
-				}				
-			}
-			var html = '';
-			for (var i=0; i<students.length; i++)
-			{
-				var s = students[i];
-				var name = '';
-				if (s.lastName.length <= 1)
-				{
-					name = s.firstName+' '+s.lastName;
-				}
-				else
-				{
-					name = s.lastName+', '+s.firstName;
-				}
-				html += '<li><a href="#student?sid='+s.id+'">'+name+'</a></li>';
-			}
-			$('#home div[data-role="content"] > ul').html(html);
-			$('#home div[data-role="content"] > ul').listview('refresh');
-		});
-        $('#home').data('cora.clean', true);
+        cora.ControllerAction(type, match, ui, 'home', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+
+            if (view.isClean())
+            {
+                console.log('not redrawing #home, nothing changed');
+                return;
+            }
+            
+            view.find('form.ui-listview-filter input[data-type="search"]').attr('value', '');
+            view.find('form.ui-listview-filter a.ui-input-clear').addClass('ui-input-clear-hidden');
+            
+            cora.getAllStudents(function (students) {
+                /*
+                 * Determine sort order of list
+                 */
+                if (students.length !== 0)
+                {
+                    view.getChild('disclaimer').hide();
+                    var student = students[0];
+                    if (student.firstName == '' || student.lastName === '' || student.lastName.length < 1)
+                    {
+                        students.sort(function (a, b) {
+                            if (a.firstName > b.firstName)
+                            {
+                                return 1;
+                            }
+                            else if (a.firstName < b.firstName)
+                            {
+                                return -1;
+                            }
+                            else
+                            {
+                                return 0;
+                            }
+                        });
+                    }				
+                }
+                var html = '';
+                for (var i=0; i<students.length; i++)
+                {
+                    var s = students[i];
+                    var name = '';
+                    if (s.lastName.length <= 1)
+                    {
+                        name = s.firstName+' '+s.lastName;
+                    }
+                    else
+                    {
+                        name = s.lastName+', '+s.firstName;
+                    }
+                    html += '<li><a href="#student?sid='+s.id+'">'+name+'</a></li>';
+                }
+                view.find('div[data-role="content"] > ul').html(html);
+                view.find('div[data-role="content"] > ul').listview('refresh');
+            });
+            view.markClean();
+        });
 	},
 	/**
 	 * #student-form
 	 */
 	onBeforeShowStudentForm: function ( type, match, ui )
 	{
-		$('#student-form-form').submit(cora.Controller.onSubmitStudentForm);
-		// Reset form fields
-		$('#student-form-form input').attr('value', '');
-		$('#student-form-form label').removeClass('form-validation-error');
-		var studentId;
-		if (match.length > 1)
-		{
-			var params = cora.Router.getParams(match[1]);
-			studentId = params.sid;
-		}
-		if (typeof studentId === 'undefined' || studentId === '')
-		{
-			// new student
-			$('#student-form h1').html('Add student');
-			$('#student-form-button-cancel').attr('href', '#home');
-		}
-		else
-		{
-			$('#student-form-button-cancel').attr('href', '#student?sid='+studentId);
-			// editing student
-			$('#student-form h1').html('Edit student');
-			cora.getStudentById(studentId, function (student) {
-				if (student !== null)
-				{
-					$('#student-form-student-id').attr('value', student.id);
-					$('#student-form-firstname').attr('value', student.firstName);
-					$('#student-form-lastname').attr('value', student.lastName);
-				}
-				else
-				{
-					$.mobile.changePage('#dialog-object-doesnt-exist', {
-						transition: 'pop',
-						reverse: false,
-						changeHash: false
-					});
-				}
-			});
-		}
+        cora.ControllerAction(type, match, ui, 'student-form', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+            var params = ctlr.params;
+            var studentId = params.sid;
+
+            var objectDoesntExistDialog = cora.DialogView('object-doesnt-exist');
+
+            var viewTitle = view.find('h1');
+            var form = view.getChild('form');
+            var studentIdField = view.getChild('student-id');
+            var firstnameField = view.getChild('firstname');
+            var lastnameField = view.getChild('lastname');
+            var cancelButton = view.getChild('button-cancel');
+
+            // bind submit handler
+            form.submit(cora.Controller.onSubmitStudentForm);
+
+            // Reset form fields
+            form.find('input').val('');
+            form.find('label').removeClass('form-validation-error');
+
+            if (typeof studentId === 'undefined' || studentId === '')
+            {
+                // new student
+                viewTitle.html('Add student');
+                cancelButton.attr('href', '#home');
+            }
+            else
+            {
+                // editing student
+                cancelButton.attr('href', '#student?sid='+studentId);
+                viewTitle.html('Edit student');
+
+                cora.getStudentById(studentId, function (student) {
+                    if (student !== null)
+                    {
+                        studentIdField.val(student.id);
+                        firstnameField.val(student.firstName);
+                        lastnameField.val(student.lastName);
+                    }
+                    else
+                    {
+                        cora.showDialog(objectDoesntExistDialog);
+                    }
+                });
+            }
+        });
 	},
 	/**
 	 * #student-form submission
 	 */
 	onSubmitStudentForm: function ( e )
 	{
-		e.preventDefault();
-		e.stopImmediatePropagation();
-		$('#student-form-form label').removeClass('form-validation-error');
-		var studentId = $('#student-form-student-id').attr('value');
-		var firstName = $('#student-form-firstname').attr('value');
-		var lastName = $('#student-form-lastname').attr('value');
-		if (firstName != '')
-		{
-			if (studentId != '')
-			{
-				cora.getStudentById(studentId, function (student) {
-					student.firstName = firstName;
-					student.lastName = lastName;
-					persistence.flush(function () {
-                        $('#student').data('cora.clean', false);
-                        $('#home').data('cora.clean', false);
-						$.mobile.changePage('#student?sid='+student.id, {
-							reverse: true,
-							changeHash: false
-						});
-					});
-				});
-			}
-			else
-			{
-				var student = cora.createStudent(firstName, lastName);
-				persistence.flush(function () {
-                    $('#home').data('cora.clean', false);
-					$.mobile.changePage('#student?sid='+student.id, {
-						reverse: true,
-						changeHash: false
-					});
-				});
-			}
-		}
-		else
-		{
-			if (!firstName)
-			{
-				$('#student-form-firstname-label').addClass('form-validation-error');
-			}
-		}
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        var view = cora.PageView('student-form');
+        var studentView = cora.PageView('student');
+        var homeView = cora.PageView('home');
+
+        var studentIdField = view.getChild('student-id');
+        var firstnameField = view.getChild('firstname');
+        var lastnameField = view.getChild('lastname');
+
+        view.find('form label').removeClass('form-validation-error');
+
+        var studentId = studentIdField.val();
+        var firstName = firstnameField.val();
+        var lastName = lastnameField.val();
+
+        if (firstName != '')
+        {
+            if (studentId != '')
+            {
+                cora.getStudentById(studentId, function (student) {
+                    student.firstName = firstName;
+                    student.lastName = lastName;
+                    persistence.flush(function () {
+                        studentView.markDirty();
+                        homeView.markDirty();
+                        cora.redirect('#student?sid='+student.id, {
+                            reverse: true, changeHash: false
+                        });
+                    });
+                });
+            }
+            else
+            {
+                var student = cora.createStudent(firstName, lastName);
+                persistence.flush(function () {
+                    homeView.markDirty();
+                    cora.redirect('#student?sid='+student.id, {
+                        reverse: true, changeHash: false
+                    });
+                });
+            }
+        }
+        else
+        {
+            if (!firstName)
+            {
+                view.getChild('firstname-label').addClass('form-validation-error');
+            }
+        }
 	},
 	/**
 	 * #student
 	 */
 	onBeforeShowStudent: function ( type, match, ui )
-	{        
-		$('#student-button-delete').click(function (e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			var studentId = $('#student').data('cora.studentId');
-			if (typeof studentId !== 'undefined')
-			{
-				$.mobile.changePage('#dialog-confirm-delete?sid='+studentId, {
-					transition: 'pop',
-					reverse: true,
-					changeHash: false
-				});
-			}
-			return false;
-		});
-		var studentId = cora.Router.getParams(match[1]).sid;
-        if ($('#student').data('cora.studentId') === studentId && $('#student').data('cora.clean') === true)
-        {
-            console.log('not redrawing #student, same student requested');
-            return;
-        }
-		// reset content
-		$('#student div[data-role="content"] ul').empty();
-		if (typeof studentId !== 'undefined')
-		{
-			cora.getStudentById(studentId, function (student) {
-				if (student !== null)
-				{
-					$('#student').data('cora.studentId', student.id);
-					$('#student-button-edit').attr('href', '#student-form?sid='+student.id);
-					$('#student div[data-role="header"] > h1').html(
-						student.firstName+' '+student.lastName
-					);
-					$('#student-button-note').attr('href', '#note-form?sid='+student.id);
-					student.notes.order('created', false).list(function (notes) {
-						if (notes.length == 0)
-						{
-							var html = '<p class="message">This student doesn\'t have any notes yet. '+
-								'Would you like to <a href="#note-form?sid='+student.id+
-								'">add one now</a>?</p>';
-							$('#student div[data-role="content"] div#student-notes').html(html);
-						}
-						else
-						{
-							var html = '';
-							var day = 0;
-							for (var i=0; i<notes.length; i++)
-							{
-								var n = notes[i];
-								var d = cora.Date(n.created);
-								var cd = d.getCompactDate();
-								if (cd != day)
-								{
-									var day = cd;
-									var dd = d.getNoteDate();
-									html += '<li data-role="list-divider">'+
-										d.getNoteDateAsString()+'</li>';											
-								}
-								html += '<li><a href="#note?sid='+student.id+'&nid='+n.id+'">'+
-									'<p class="note-time">'+d.getNoteTimeAsString()+'</p>'+
-									'<p class="note-teaser">'+n.content+'</p></a></li>';
-							}
-							$('#student div[data-role="content"] #student-notes').html(
-								'<ul data-role="listview">'+html+'</ul>'
-							);
-							$('#student div[data-role="content"] #student-notes ul').listview();
-						}
-					});
-                    $('#student').data('cora.clean', true);
-				}
-				else
-				{
-					$.mobile.changePage('#dialog-object-doesnt-exist', {
-						transition: 'pop',
-						reverse: false,
-						changeHash: false
-					});
-				}
-			});
-		}
-		else
-		{
-			$.mobile.changePage('#dialog-no-object-specified', {
-				transition: 'pop',
-				reverse: false,
-				changeHash: false
-			});
-		}
+	{
+        cora.ControllerAction(type, match, ui, 'student', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+            var params = ctlr.params;
+            var studentId = params.sid;
+            var savedStudentId = view.data('studentId');
+
+            var confirmDeleteDialog = cora.DialogView('confirm-delete');
+            var objectDoesntExistDialog = cora.DialogView('object-doesnt-exist');
+            var noObjectSpecifiedDialog = cora.DialogView('no-object-specified');
+
+            var viewTitle = view.find('h1');
+            var studentNotes = view.getChild('notes');
+            var deleteButton = view.getChild('button-delete');
+            var editButton = view.getChild('button-edit');
+            var noteButton = view.getChild('button-note');
+
+            // bind click handler
+            deleteButton.click(function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                if (typeof studentId !== 'undefined')
+                {
+                    cora.showDialog(confirmDeleteDialog, {
+                        params: { sid: studentId },
+                        reverse: true
+                    });
+                }
+                return false;
+            });
+
+            if (savedStudentId === studentId && view.isClean())
+            {
+                console.log('not redrawing #student, same student requested');
+                return;
+            }
+
+            // reset content
+            view.find('div[data-role="content"] ul').empty();
+
+            if (typeof studentId !== 'undefined')
+            {
+                cora.getStudentById(studentId, function (student) {
+                    if (student !== null)
+                    {
+                        view.data('studentId', student.id);
+                        viewTitle.html(student.firstName+' '+student.lastName);
+                        editButton.attr('href', '#student-form?sid='+student.id);
+                        noteButton.attr('href', '#note-form?sid='+student.id);
+
+                        student.notes.order('created', false).list(function (notes) {
+                            if (notes.length == 0)
+                            {
+                                var html = '<p class="message">This student doesn\'t have any notes yet. '+
+                                    'Would you like to <a href="#note-form?sid='+student.id+
+                                    '">add one now</a>?</p>';
+                                studentNotes.html(html);
+                            }
+                            else
+                            {
+                                var html = '';
+                                var day = 0;
+                                for (var i=0; i<notes.length; i++)
+                                {
+                                    var n = notes[i];
+                                    var d = cora.Date(n.created);
+                                    var cd = d.getCompactDate();
+                                    if (cd != day)
+                                    {
+                                        var day = cd;
+                                        var dd = d.getNoteDate();
+                                        html += '<li data-role="list-divider">'+
+                                            d.getNoteDateAsString()+'</li>';											
+                                    }
+                                    html += '<li><a href="#note?sid='+student.id+'&nid='+n.id+'">'+
+                                        '<p class="note-time">'+d.getNoteTimeAsString()+'</p>'+
+                                        '<p class="note-teaser">'+n.content+'</p></a></li>';
+                                }
+                                studentNotes.html('<ul data-role="listview">'+html+'</ul>');
+                                studentNotes.find('ul').listview();
+                            }
+                        });
+                        view.markClean();
+                    }
+                    else
+                    {
+                        cora.showDialog(objectDoesntExistDialog);
+                    }
+                });
+            }
+            else
+            {
+                cora.showDialog(noObjectSpecifiedDialog);
+            }
+        });
 	},
 	/**
 	 * #note-form
 	 */
-	onBeforeShowNoteForm: function ( type, match, ui )
-	{
-		// setup tag suggestions
-		$('#note-form-tags-suggestions ul').empty();
-		$('#note-form-tags').keyup(function (e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			var inputValue = $(this).attr('value');
-		    if (cora.suggestTagsTimeout !== null)
-			{
-				clearTimeout(cora.suggestTagsTimeout);
-			}
-			cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'","#note-form")', 200);
-		});
-		$('#note-form *').focusin(function () {
-			$('#note-form-tags-suggestions ul').hide();
-		});
-		// bind to submit
-		$('#note-form-form').submit(cora.Controller.onSubmitNoteForm);
-		// Reset form fields
-		$('#note-form-form input').attr('value', '');
-		$('#note-form-content').val('');
-		$('#note-form-form label').removeClass('form-validation-error');
-		var params = cora.Router.getParams(match[1]);
-		var noteId = params.nid;
-		if (typeof noteId === 'undefined' || noteId === '')
-		{
-			/*
-			 * We're adding a new note
-			 */
-			$('#note-form h1').html('Add note');
-			var studentId = params.sid;
-			if (typeof studentId !== 'undefined' && studentId !== '')
-			{
-				/*
-				 * A student was specified, so retrieve and load into the form
-				 */
-				cora.getStudentById(studentId, function (student) {
-					if (student !== null)
-					{
-						$('#note-form h1').html(
-							'Add note for '+student.firstName+' '+student.lastName
-						);
-						$('#note-form-student-id').attr(
-							'value', student.id
-						);
-						$('#note-form-student-name').attr(
-							'value', student.firstName+' '+student.lastName
-						);
-						$('#note-form-student-name').attr(
-							'disabled', 'disabled'
-						);
-						$('#note-form-button-back').attr('href', '#student?sid='+studentId);
-					}
-					else
-					{
-						$.mobile.changePage('#dialog-object-doesnt-exist', {
-							transition: 'pop',
-							reverse: false,
-							changeHash: false
-						});
-					}
-				});
-			}
-		}
-		else
-		{
-			/*
-			 * We're editing a note
-			 */
-			$('#note-form h1').html('Edit note');
-			cora.getNoteById(noteId, function (note) {
-				if (note !== null)
-				{
-					note.fetch('student', function (student) {
-						$('#note-form-note-id').attr('value', note.id);
-						$('#note-form-student-name').attr(
-							'value', student.firstName+' '+student.lastName
-						);
-						$('#note-form-student-name').attr('disabled', 'disabled');
-						$('#note-form-content').attr('value', note.content);
-						$('#note-form-button-back').attr('href', '#student?sid='+student.id);
-						note.tags.list(function (tags) {
-							var taglist = [];
-							for (var i=0; i<tags.length; i++) taglist.push(tags[i].name);
-							$('#note-form-tags').attr('value', taglist.join(', '));
-						});
-					});
-				}
-				else
-				{
-					$.mobile.changePage('#dialog-object-doesnt-exist', {
-						transition: 'pop',
-						reverse: false,
-						changeHash: false
-					});
-				}
-			});
-		}
-	},
+    onBeforeShowNoteForm: function ( type, match, ui )
+    {
+        cora.ControllerAction( type, match, ui, 'note-form', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+            var params = ctlr.params;
+
+            var confirmCancelDialog = cora.DialogView('confirm-cancel');
+            var objectDoesntExistDialog = cora.DialogView('object-doesnt-exist');
+
+            var backButton = view.getChild('button-back');
+
+            var viewTitle = view.find('h1');
+            var noteIdField = view.getChild('note-id');
+            var studentIdField = view.getChild('student-id');
+            var studentNameField = view.getChild('student-name');
+            var contentField = view.getChild('content');
+            var tagField = view.getChild('tags');
+            var tagSuggestionsList = view.getChild('tags-suggestions ul');
+
+            // setup tag suggestions
+            tagSuggestionsList.empty();
+            tagField.keyup(function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var inputValue = $(this).val();
+                if (cora.suggestTagsTimeout !== null)
+                {
+                    clearTimeout(cora.suggestTagsTimeout);
+                }
+                cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'","#note-form")', 200);
+            });
+
+            // hide tag suggestions when focus changes to any field
+            view.find('*').focusin(function () {
+                tagSuggestionsList.hide();
+            });
+                 
+            // bind to submit
+            view.getChild('form').submit(cora.Controller.onSubmitNoteForm);
+            
+            // Reset form fields
+            contentField.val('');
+            view.find('form input').val('');
+            view.find('form label').removeClass('form-validation-error');
+            
+            // setup cancel button
+            backButton.click(function () {
+                view.data('noteText', contentField.val())
+                    .data('noteTags', tagField.val());
+            });
+            
+            // load any saved data
+            if (view.data('noteText') || view.data('noteTags'))
+            {
+                contentField.val(view.data('noteText'));
+                tagField.val(view.data('noteTags'));
+                view.clearData('noteText').clearData('noteTags');
+            }
+
+            var noteId = params.nid;
+            if (typeof noteId === 'undefined' || noteId === '')
+            {
+                /*
+                 * We're adding a new note
+                 */
+                viewTitle.html('Add note');
+                var studentId = params.sid;
+                if (typeof studentId !== 'undefined' && studentId !== '')
+                {
+                    // set nextUrl cancel dialog
+                    confirmCancelDialog.data('nextUrl', '#student?sid='+studentId);
+
+                    /*
+                     * A student was specified, so retrieve and load into the form
+                     */
+                    cora.getStudentById(studentId, function (student) {
+                        if (student !== null)
+                        {
+                            viewTitle.html(
+                                'Add note for '+student.firstName+' '+student.lastName
+                            );
+                            studentIdField.val(student.id);
+                            studentNameField
+                                .val(student.firstName+' '+student.lastName)
+                                .attr('disabled', 'disabled');
+                        }
+                        else
+                        {
+                            cora.showDialog(objectDoesntExistDialog);
+                        }
+                    });
+                }
+            }
+            else
+            {
+                /*
+                 * We're editing a note
+                 */
+                viewTitle.html('Edit note');
+                cora.getNoteById(noteId, function (note) {
+                    if (note !== null)
+                    {
+                        note.fetch('student', function (student) {
+                            // set noteId and studentId on cancel dialog
+                            confirmCancelDialog
+                                .data('noteId', note.id)
+                                .data('studentId', student.id);
+                            noteIdField.attr('value', note.id);
+                            studentNameField
+                                .val(student.firstName+' '+student.lastName)
+                                .attr('disabled', 'disabled');
+                            contentField.attr('value', note.content);
+                            note.tags.list(function (tags) {
+                                var taglist = [];
+                                for (var i=0; i<tags.length; i++) taglist.push(tags[i].name);
+                                tagField.attr('value', taglist.join(', '));
+                            });
+                        });
+                    }
+                    else
+                    {
+                        cora.showDialog(objectDoesntExistDialog);
+                    }
+                });
+            }
+        });
+    },
 	/**
 	 * #note-form submission
 	 */
@@ -800,11 +1042,20 @@ cora.Controller = {
 	{
 		e.preventDefault();
 		e.stopImmediatePropagation();
-		$('#note-form-form label').removeClass('form-validation-error');
-		var noteId = $('#note-form-note-id').attr('value');
-		var studentId = $('#note-form-student-id').attr('value');
-		var formTags = $('#note-form-tags').attr('value');
-		var content = $('#note-form-content').val();
+
+        var view = cora.PageView('note-form');
+        var manageTagsView = cora.PageView('options-manage-tags');
+
+        var objectDoesntExistDialog = cora.DialogView('object-doesnt-exist');
+
+        // reset validation errors
+		view.find('form label').removeClass('form-validation-error');
+        
+		var noteId = view.getChild('note-id').val();
+		var studentId = view.getChild('student-id').val();
+		var formTags = view.getChild('tags').val();
+		var content = view.getChild('content').val();
+        
 		if ((noteId !== '' && content !== '') 
 			|| (!noteId && studentId !== '' && content !== ''))
 		{
@@ -869,7 +1120,7 @@ cora.Controller = {
 											// so we create a new entity for it
 											tag = cora.createTag(tname);
                                             tag.active = true;
-                                            $('#options-manage-tags').data('cora.clean', false);
+                                            manageTagsView.markDirty();
 										}
 										// finally we add it to the tag
 										note.tags.add(tag);
@@ -887,11 +1138,10 @@ cora.Controller = {
                                     }
                                 }
 								cora.persistence.flush(function () {
-                                    $('#student').data('cora.clean', false);
+                                    manageTagsView.markDirty();
 									note.fetch('student', function (student) {
-										$.mobile.changePage('#note?sid='+student.id+'&nid='+note.id, {
-											reverse: true,
-											changeHash: false
+										cora.redirect('#note?sid='+student.id+'&nid='+note.id, {
+											reverse: true, changeHash: false
 										});
 									});
 								});
@@ -900,11 +1150,7 @@ cora.Controller = {
 					}
 					else
 					{
-						$.mobile.changePage('#dialog-object-doesnt-exist', {
-							transition: 'pop',
-							reverse: false,
-							changeHash: false
-						});
+						ctlr
 					}
 				});
 			}
@@ -937,15 +1183,15 @@ cora.Controller = {
 									if (typeof tag === 'undefined')
 									{
 										tag = cora.createTag(tname);
-                                        $('#options-manage-tags').data('cora.clean', false);
+                                        manageTagsView.markDirty();
 										
 									}
 									note.tags.add(tag);
 								}
 							}
 							cora.persistence.flush(function () {
-                                $('#student').data('cora.clean', false);
-								$.mobile.changePage('#student?sid='+student.id,{reverse: true});
+                                manageTagsView.markDirty();
+								cora.redirect('#student?sid='+student.id, { reverse: true });
 							});
 						});
 					}
@@ -959,239 +1205,307 @@ cora.Controller = {
 			 */
 			if (!studentId)
 			{
-				$('#note-form-student-name-label').addClass('form-validation-error');
+				view.getChild('student-name-label').addClass('form-validation-error');
 			}
 			if (!content)
 			{
-				$('#note-form-content-label').addClass('form-validation-error');
+				view.getChid('content-label').addClass('form-validation-error');
 			}
 		}		
 		return false;
+	},
+	/**
+	 * #dialog-confirm-cancel
+	 */
+	onBeforeShowDialogConfirmCancel: function ( type, match, ui )
+	{
+        cora.ControllerAction(type, match, ui, function () {
+            var ctlr = this;
+            var view = ctlr.view;
+
+            var noButton = view.getChild('button-no');
+            var yesButton = view.getChild('button-yes');
+
+            var nextUrl = view.data('nextUrl');
+
+            yesButton.click(function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $.mobile.changePage(nextUrl, {
+                    transition: 'pop',
+                    reverse: true,
+                    changeHash: true
+                });
+            });
+            
+            noButton.click(function () {
+                view.close();
+            });
+        });
 	},
 	/**
 	 * #note
 	 */
 	onBeforeShowNote: function ( type, match, ui )
 	{
-		$('#note-button-delete').click(function (e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			var noteId = $('#note').data('cora.noteId');
-			var studentId = $('#note').data('cora.studentId');
-			if (typeof noteId !== 'undefined' && noteId != '')
-			{
-				$.mobile.changePage('#dialog-confirm-delete?nid='+noteId+'&sid='+studentId, {
-					transition: 'pop',
-					reverse: false,
-					changeHash: false
-				});
-			}
-			return false;
-		});
-		var params = cora.Router.getParams(match[1]);
-		var studentId = params.sid;
-		var noteId = params.nid;
-		$('#note-button-back').attr('href', '#student?sid='+studentId);
-		var student = cora.EntityCache.get(studentId);
-		if (typeof noteId !== 'undefined' && noteId !== '')
-		{
-			cora.getNoteById(noteId, function (note) {
-				if (note !== null)
-				{
-					$('#note').data('cora.noteId', note.id);
-					$('#note').data('cora.studentId', student.id);
-					$('#note p.note-student').html(
-						student.firstName+' '+student.lastName
-					);
-					var d = cora.Date(note.created);
-					$('#note p.note-created').html(
-						d.getNoteDateAsString()+' @ '+d.getNoteTimeAsString()
-					);
-					note.tags.list(function (tags) {
-						var taglist = [];
-						for (var i=0; i<tags.length; i++) taglist.push(tags[i].name);
-						$('#note p.note-tags').html('Tags: '+taglist.join(', '));
-					});
-					$('#note p.note-content').html(note.content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br />'));
-					$('#note-button-edit').attr('href', '#note-form?nid='+noteId);
-				}
-				else
-				{
-					$.mobile.changePage('#dialog-object-doesnt-exist', {
-						transition: 'pop',
-						reverse: false,
-						changeHash: false
-					});				
-				}
-			});
-		}
-		else
-		{
-			$.mobile.changePage('#dialog-no-object-specified', {
-				transition: 'pop',
-				reverse: false,
-				changeHash: false
-			});
-		}
+        cora.ControllerAction(type, match, ui, 'note', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+            var params = ctlr.params;
+            var studentId = params.sid;
+            var noteId = params.nid;
+
+            var deleteButton = view.getChild('button-delete');
+            var backButton = view.getChild('button-back');
+            var editButton = view.getChild('button-edit');
+
+            var studentContainer = view.find('p.note-student');
+            var createdContainer = view.find('p.note-created');
+            var contentContainer = view.find('p.note-content');
+            var tagsContainer = view.find('p.note-tags');
+
+            deleteButton.click(function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var noteId = view.data('noteId');
+                var studentId = view.data('studentId');
+                if (typeof noteId !== 'undefined' && noteId != '')
+                {
+                    $.mobile.changePage('#dialog-confirm-delete?nid='+noteId+'&sid='+studentId, {
+                        transition: 'pop',
+                        reverse: false,
+                        changeHash: false
+                    });
+                }
+                return false;
+            });
+
+            backButton.attr('href', '#student?sid='+studentId);
+
+            var student = cora.EntityCache.get(studentId);
+            if (typeof noteId !== 'undefined' && noteId !== '')
+            {
+                cora.getNoteById(noteId, function (note) {
+                    if (note !== null)
+                    {
+                        view.data('noteId', note.id);
+                        view.data('studentId', student.id);
+                        studentContainer.html(student.firstName+' '+student.lastName);
+                        var d = cora.Date(note.created);
+                        createdContainer.html(d.getNoteDateAsString()+' @ '+d.getNoteTimeAsString());
+                        note.tags.list(function (tags) {
+                            var taglist = [];
+                            for (var i=0; i<tags.length; i++) taglist.push(tags[i].name);
+                            tagsContainer.html('Tags: '+taglist.join(', '));
+                        });
+                        contentContainer.html(note.content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br />'));
+                        editButton.attr('href', '#note-form?nid='+noteId);
+                    }
+                    else
+                    {
+                        $.mobile.changePage('#dialog-object-doesnt-exist', {
+                            transition: 'pop',
+                            reverse: false,
+                            changeHash: false
+                        });				
+                    }
+                });
+            }
+            else
+            {
+                $.mobile.changePage('#dialog-no-object-specified', {
+                    transition: 'pop',
+                    reverse: false,
+                    changeHash: false
+                });
+            }
+        });
 	},
 	/**
 	 * #dialog-confirm-delete
 	 */
 	onBeforeShowDialogConfirmDelete: function ( type, match, ui )
 	{
-		var params = cora.Router.getParams(match[1]);
-		var noteId = params.nid;
-		var studentId = params.sid;
-		if (typeof noteId !== 'undefined')
-		{
-			$('#dialog-confirm-delete-button-delete').data('cora.noteId', noteId);
-			$('#dialog-confirm-delete-button-delete').data('cora.studentId', studentId);
-			$('#dialog-confirm-delete-button-cancel').attr('href', '#note?nid='+noteId+'&sid='+studentId);
-			$('#dialog-confirm-delete-button-delete').click(function (e) {
-				var noteId = $(this).data('cora.noteId');
-				var studentId = $(this).data('cora.studentId');
-				e.preventDefault();
-				e.stopImmediatePropagation();
-				cora.getNoteById(noteId, function (note) {
-					cora.removeNote(note);
-					persistence.flush(function () {
-						$.mobile.changePage('#student?sid='+studentId, {
-							transition: 'pop',
-							reverse: true,
-							changeHash: true
-						});
-					});
-					return false;
-				});
-			});
-		}
-		else if (typeof studentId !== 'undefined')
-		{
-			$('#dialog-confirm-delete-button-delete').data('cora.studentId', studentId);
-			$('#dialog-confirm-delete-button-cancel').attr('href', '#student?sid='+studentId);
-			$('#dialog-confirm-delete-button-delete').click(function (e) {
-				var studentId = $(this).data('cora.studentId');
-				e.preventDefault();
-				e.stopImmediatePropagation();
-				cora.getStudentById(studentId, function (student) {
-					cora.removeStudent(student);
-					persistence.flush(function () {
-                        $('#home').data('cora.clean', false);
-						$.mobile.changePage('#home', {
-							transition: 'pop',
-							reverse: true,
-							changeHash: true
-						});
-					});
-					return false;
-				});
-			});
-		}
+        cora.ControllerAction(type, match, ui, 'dialog-confirm-delete', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+            var params = ctlr.params;
+            var noteId = params.nid;
+            var studentId = params.sid;
+
+            var deleteButton = view.getChild('button-delete');
+            var cancelButton = view.getChild('button-cancel');
+
+            if (typeof noteId !== 'undefined')
+            {
+                cancelButton.attr('href', '#note?nid='+noteId+'&sid='+studentId);
+                deleteButton.click(function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    cora.getNoteById(noteId, function (note) {
+                        cora.removeNote(note);
+                        persistence.flush(function () {
+                            cora.redirect('#student?sid='+studentId, {
+                                transition: 'pop', reverse: true
+                            });
+                        });
+                        return false;
+                    });
+                });
+            }
+            else if (typeof studentId !== 'undefined')
+            {
+                cancelButton.attr('href', '#student?sid='+studentId);
+                deleteButton.click(function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    cora.getStudentById(studentId, function (student) {
+                        cora.removeStudent(student);
+                        persistence.flush(function () {
+                            cora.PageView('home').markDirty();
+                            cora.redirect('#home', {
+                                transition: 'pop', reverse: true
+                            });
+                        });
+                        return false;
+                    });
+                });
+            }
+        });
 	},
 	/**
 	 * #options-export-data
 	 */
 	onBeforeShowExportData: function ( type, match, ui )
 	{
-		// check if browser supports File API, particularly FileWriter
-		if (typeof(FileWriter) !== 'undefined')
-		{
-		}
-		// just dump the data into a textarea and have the user copy and paste
-		else
-		{
-			cora.getAllStudents(function (students) {
-				$('#options-export-data-textarea').append(
-					'"First name", "Last name", "Date", "Tags", "Note"\r\n'
-				);
-				for (var s=0; s<students.length; s++)
-				{
-					var student = students[s];
-					student.notes.list(function (notes) {
-						for (var n=0; n<notes.length; n++)
-						{
-							var note = notes[n];
-							note.tags.list(function (tags) {
-								var data = '';
-								data += '"' + student.firstName + '", "' + student.lastName + '"';
-								data += ', "' + (new cora.Date(note.created)).getNoteDateAsString() + '"';
-								var taglist = [];
-								for (var t = 0; t<tags.length; t++)
-								{
-									taglist.push(tags[t].name);
-								}
-								data += ', "' + taglist.join(';') + '"';
-								data += ', "' + note.content + '"';
-								data += '\r\n';
-								$('#options-export-data-textarea').append(data);
-							});
-						}
-					});
-				}
-			});
-		}
+        cora.ControllerAction(type, match, ui, 'options-export-data', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+
+            var textarea = view.getChild('textarea');
+            // check if browser supports File API, particularly FileWriter
+            if (typeof(FileWriter) !== 'undefined')
+            {
+            }
+            // just dump the data into a textarea and have the user copy and paste
+            else
+            {
+                cora.getAllStudents(function (students) {
+                    textarea.append(
+                        '"First name", "Last name", "Date", "Tags", "Note"\r\n'
+                    );
+                    for (var s=0; s<students.length; s++)
+                    {
+                        var student = students[s];
+                        student.notes.list(function (notes) {
+                            for (var n=0; n<notes.length; n++)
+                            {
+                                var note = notes[n];
+                                note.tags.list(function (tags) {
+                                    var data = '';
+                                    data += '"' + student.firstName + '", "' + student.lastName + '"';
+                                    data += ', "' + (new cora.Date(note.created)).getNoteDateAsString() + '"';
+                                    var taglist = [];
+                                    for (var t = 0; t<tags.length; t++)
+                                    {
+                                        taglist.push(tags[t].name);
+                                    }
+                                    data += ', "' + taglist.join(';') + '"';
+                                    data += ', "' + note.content + '"';
+                                    data += '\r\n';
+                                    textarea.append(data);
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
 	},
 	/**
 	 * #options-manage-tags
 	 */
 	onBeforeShowManageTags: function ( type, match, ui )
 	{
-        if ($('#options-manage-tags').data('cora.clean') === true)
-        {
-            console.log('not redrawing #options-manage-tags, nothing changed');
-            return;
-        }
-		$('#options-manage-tags ul').empty();
-		cora.getAllTags(function (tags) {
-			for (var t=0; t<tags.length; t++)
-			{
-				var tag = tags[t];
-				$('#options-manage-tags ul').append(
-					'<li><a href="#options-manage-tags-view?tid='+tag.id+'">'+tag.name+'</a></li>'
-				);
-			}
-			$('#options-manage-tags ul').listview('refresh');
-            $('#options-manage-tags').data('cora.clean', true);
-		});
+        cora.ControllerAction(type, match, ui, 'options-manage-tags', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+
+            var tagList = view.find('ul');
+
+            if (view.isClean())
+            {
+                console.log('not redrawing #options-manage-tags, nothing changed');
+                return;
+            }
+
+            tagList.empty();
+            cora.getAllTags(function (tags) {
+                for (var t=0; t<tags.length; t++)
+                {
+                    var tag = tags[t];
+                    tagList.append(
+                        '<li><a href="#options-manage-tags-view?tid='+tag.id+'">'+tag.name+'</a></li>'
+                    );
+                }
+                tagList.listview('refresh');
+                view.markClean();
+            });
+        });
 	},
 	/**
 	 * #options-manage-tags-view
 	 */
 	onBeforeShowManageTagsView: function ( type, match, ui )
 	{
-		$('#options-manage-tags-form').submit(cora.Controller.onSubmitShowManageTagsForm);
-		var params = cora.Router.getParams(match[1]);
-		var tagId = params.tid;
-		$('#options-manage-tags-form-tag-id').val(tagId);
-		$('#options-manage-tags-form-button-delete').attr('href', '#options-manage-tags-delete?tid='+tagId);
-		cora.getTagById(tagId, function (tag) {
-			$('#options-manage-tags-form-tag-name').val(tag.name);
-		});
+        cora.ControllerAction(type, match, ui, 'options-manage-tags-view', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+            var params = ctlr.params;
+            var tagId = params.tid;
+
+            var form = view.getChild('form');
+            var tagIdField = view.getChild('form-tag-id');
+            var tagNameField = view.getChild('form-tag-name');
+            var deleteButton = view.getChild('button-delete');
+
+            form.submit(cora.Controller.onSubmitShowManageTagsForm);
+            tagIdField.val(tagId);
+            deleteButton.attr('href', '#options-manage-tags-delete?tid='+tagId);
+            cora.getTagById(tagId, function (tag) {
+                tagNameField.val(tag.name);
+            });
+        });
 	},
 	/**
 	 * #options-manage-tags-form submission
 	 */
 	onSubmitShowManageTagsForm: function ( e )
 	{
-		var tagId = $('#options-manage-tags-form-tag-id').attr('value');
-		var tagName = $('#options-manage-tags-form-tag-name').attr('value');
+        var view = cora.PageView('options-manage-tags-view');
+
+        var tagField = view.getChild('form-tag-id');
+        var tagNameField = view.getChild('form-tag-name');
+
+		var tagId = tagIdField.val();
+		var tagName = tagNameField.val();
+
 		console.log('tag id: '+tagId);
 		if (tagName != '')
 		{
 			cora.getTagById(tagId, function (tag) {
 				tag.name = tagName;
 				cora.persistence.flush(function () {
-                    $('#options-manage-tags').data('cora.clean', false);
-					$.mobile.changePage('#options-manage-tags', {
-						reverse: true,
-						changeHash: false
+                    cora.PageView('options-manage-tags').markDirty();
+					cora.redirect('#options-manage-tags', {
+						reverse: true, changeHash: false
 					});
 				});
 			});
 		}
 		else
 		{
-			$('#options-manage-tags-form-tag-name-label').addClass('form-validation-error');
+            view.getChild('form-tag-name-label').addClass('form-validation-error');
 		}
 	},
 	/**
@@ -1199,56 +1513,71 @@ cora.Controller = {
 	 */
 	onBeforeShowManageTagsDelete: function ( type, match, ui )
 	{
-		var params = cora.Router.getParams(match[1]);
-		var tagId = params.tid;
-		$('#options-manage-tags-delete-button-cancel').attr('href', '#options-manage-tags-view?tid='+tagId);
-        $('#options-manage-tags-delete-button-delete').attr('href', '#'+tagId);
-		$('#options-manage-tags-delete-button-delete').click(function (e) {
-            e.preventDefault();
-			e.stopImmediatePropagation();
-            cora.getTagById($(this).attr('href').slice(1), function (t) {
-                cora.removeTag(t);
-                persistence.flush(function () {
-                    $('#options-manage-tags').data('cora.clean', false);
-                    $.mobile.changePage('#options-manage-tags', {
-                        transition: 'slide',
-                        reverse: true,
-                        changeHash: true
+        cora.ControllerAction(type, match, ui, 'options-manage-tags-delete', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+            var params = ctlr.params;
+            var tagId = params.tid;
+
+            var deleteButton = view.getChild('button-delete');
+            var cancelButton = view.getChild('button-cancel');
+
+            cancelButton.attr('href', '#options-manage-tags-view?tid='+tagId);
+            deleteButton.attr('href', '#'+tagId);
+            deleteButton.click(function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                cora.getTagById($(this).attr('href').slice(1), function (t) {
+                    cora.removeTag(t);
+                    persistence.flush(function () {
+                        cora.PageView('options-manage-tags').markDirty();
+                        cora.redirect('#options-manage-tags', { reverse: true });
                     });
                 });
             });
-		});
-		cora.getTagById(tagId, function ( tag ) {
-			$('#options-manage-tags-delete-tag-name').html('Tag: <i>'+tag.name+'</i>');
-		});
+
+            cora.getTagById(tagId, function ( tag ) {
+                view.getChild('tag-name').html('Tag: <i>'+tag.name+'</i>');
+            });
+        });
 	},
     /**
      * #options-reports
      */
     onBeforeShowReports: function ( type, match, ui )
     {
-		// setup tag suggestions
-		$('#options-reports-form-tags-suggestions ul').empty();
-		$('#options-reports-form-tags').keyup(function (e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			var inputValue = $(this).attr('value');
-		    if (cora.suggestTagsTimeout !== null)
-			{
-				clearTimeout(cora.suggestTagsTimeout);
-			}
-			cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'","#options-reports-form")', 200);
-		});
-		$('#options-reports-form *').focusin(function () {
-			$('#options-reports-form-tags-suggestions ul').hide();
-		});
-		// bind to submit
-		$('#options-reports-form').submit(function ( e ){       
-            var tags = $('#options-reports-form-tags').val();
-            $('#options-reports-results').data('cora.tags', tags);
-            $('#options-reports-form-tags').val('');
-            $('#options-reports-results-data').empty();
-            cora.Controller.onSubmitReportsForm(e);
+        cora.ControllerAction(type, match, ui, 'options-reports', function () {
+            var ctlr = this;
+            var view = ctlr.view;
+            var resultsView = cora.PageView('options-reports-resutls');
+
+            var form = view.getChild('form');
+            var tagSuggestionsList = view.getChild('form-tags-suggestions ul');
+            var tagsField = view.getChild('form-tags');
+
+            // setup tag suggestions
+            tagSuggestionsList.empty();
+            tagsField.keyup(function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var inputValue = $(this).attr('value');
+                if (cora.suggestTagsTimeout !== null)
+                {
+                    clearTimeout(cora.suggestTagsTimeout);
+                }
+                cora.suggestTagsTimeout = setTimeout('cora.suggestTags("'+inputValue+'","#options-reports-form")', 200);
+            });
+            view.find('*').focusin(function () {
+                tagSuggestionsList.hide();
+            });
+            // bind to submit
+            form.submit(function ( e ){       
+                var tags = tagsField.val();
+                tagsField.val('');
+                resultsView.data('tags', tags);
+                resultsView.getChild('data').empty();
+                cora.Controller.onSubmitReportsForm(e);
+            });
         });
     },
     /**
@@ -1257,22 +1586,32 @@ cora.Controller = {
     onSubmitReportsForm: function ( e )
     {
         e.preventDefault();
-        e.stopImmediatePropagation(); 
-		var formTags = $('#options-reports-results').data('cora.tags');
+        e.stopImmediatePropagation();
+
+        var resultsView = cora.PageView('options-reports-results');
+        var formView = cora.PageView('options-reports');
+
+        var criteriaContainer = resultsView.getChild('criteria');
+        var dataContainer = resultsView.getChild('data');
+        var refineButton = resutlsView.getChild('button-refine');
+
+		var formTags = resultsView.data('tags');
         formTags = formTags.split(',');
+
         // reset content
-        $('#options-reports-results-criteria').html(
+        criteriaContainer.html(
             'Displaying all notes tagged with <i>'+formTags.join('</i> and <i>')+'</i>'
         );
-        $('#options-reports-results-refine-button').click(function (e) {
+
+        refineButton.click(function (e) {
             e.preventDefault();
 			e.stopImmediatePropagation();
-            $('#options-reports-form-tags').val($('#options-reports-results').data('cora.tags'));
-            $.mobile.changePage('#options-reports', {
-                reverse: true,
-                changeHash: false
+            formView.getChild('tags').val(resultsView.data('tags'));
+            cora.redirect('#options-reports', {
+                reverse: true, changeHash: false
             });
         });
+
         var tagsqc = cora.Tag.all();
         for (var i=0; i<formTags.length; i++)
         {
@@ -1287,10 +1626,11 @@ cora.Controller = {
                 tagsqc = tagsqc.and(new persistence.PropertyFilter('name', '=', tagName));
             }
         }
+
         tagsqc.list(function (tags) {
             if (tags.length === 0)
             {
-                $('#options-reports-results-data').html('<p><i>No matching notes found</i></p>');
+                dataContainer.html('<p><i>No matching notes found</i></p>');
             }
             for (var i=0; i<tags.length; i++)
             {
@@ -1302,7 +1642,7 @@ cora.Controller = {
                         var studentNotes = $('#sid-'+note.student.id+' ul');
                         if (studentNotes.length === 0)
                         {
-                            $('#options-reports-results-data').append(
+                            dataContainer.append(
                                 '<div id="sid-'+note.student.id+'" data-role="collapsible" data-inset="false">'+
                                 '<h2>'+note.student.firstName+' '+note.student.lastName+'</h2>'+
                                 '<ul data-role="listview"></ul></div>'
@@ -1320,9 +1660,8 @@ cora.Controller = {
                     }
                 });               
             }
-            $.mobile.changePage('#options-reports-results', {
-                reverse: false,
-                changeHash: false
+            cora.redirect('#options-reports-results', {
+                reverse: false, changeHash: false
             });
         });
     },
@@ -1338,6 +1677,7 @@ cora.initialize = function ( callback, config )
 	$.mobile.allowCrossDomainPages = true;
 	$.mobile.defaultPageTransition = 'slide';
 	cora.EntityCache = cora.EntityCacheConstructor();
+
 	cora.Router = new $.mobile.Router([
 		{'#home': 'onShowHome'},
 		{'#student-form([?].*)': {events: 'bs', handler: 'onBeforeShowStudentForm'}},
@@ -1352,8 +1692,10 @@ cora.initialize = function ( callback, config )
 		{'#options-manage-tags-view([?].*)': {events: 'bs', handler: 'onBeforeShowManageTagsView'}},
 		{'#options-manage-tags-delete([?].*)': {events: 'bs', handler: 'onBeforeShowManageTagsDelete'}},
 		{'#dialog-confirm-delete([?].*)': {events: 'bs', handler: 'onBeforeShowDialogConfirmDelete'}},
+		{'#dialog-confirm-cancel(|[?].*)': {events: 'bs', handler: 'onBeforeShowDialogConfirmCancel'}},
 		{'defaultHandler': 'defaultAction'}
 	], cora.Controller);
+
 	/*
 	 * Setup persistence
 	 */
@@ -1366,6 +1708,7 @@ cora.initialize = function ( callback, config )
 	cora.persistence.store.websql.config(
 		cora.persistence, config.database, config.description, config.size
 		);
+
 	/*
 	 * Define the entity objects
 	 */
@@ -1386,11 +1729,13 @@ cora.initialize = function ( callback, config )
 	cora.Note.hasMany('tags', cora.Tag, 'notes');
 	cora.Tag.hasMany('students', cora.Student, 'tags');
 	cora.Tag.hasMany('notes', cora.Note, 'tags');
+
 	/*
 	 * Synch the definitions with the persistence layer
 	 * TODO: make this a one-time thing (during first-run)
 	 */
 	cora.persistence.schemaSync(callback);
+
     /*
      * Event locking system to prevent multiple clicks from
      * overloading the framework - tinyissue#149
