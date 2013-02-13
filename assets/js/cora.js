@@ -950,7 +950,7 @@ cora.Controller = {
             
             // Reset form fields
             contentField.val('');
-            view.find('form input').val('');
+            view.find('form :input').val('');
             view.find('form label').removeClass('form-validation-error');
             
             // setup cancel button
@@ -1231,11 +1231,7 @@ cora.Controller = {
             yesButton.click(function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                $.mobile.changePage(nextUrl, {
-                    transition: 'pop',
-                    reverse: true,
-                    changeHash: true
-                });
+                cora.redirect(nextUrl, { transition: 'pop', reverse: true, changeHash: true });
             });
             
             noButton.click(function () {
@@ -1255,6 +1251,10 @@ cora.Controller = {
             var studentId = params.sid;
             var noteId = params.nid;
 
+            var confirmDeleteDialog = cora.DialogView('confirm-delete');
+            var objectDoesntExistDialog = cora.DialogView('object-doesnt-exist');
+            var noObjectSpecified = cora.DialogView('no-object-specified');
+
             var deleteButton = view.getChild('button-delete');
             var backButton = view.getChild('button-back');
             var editButton = view.getChild('button-edit');
@@ -1271,10 +1271,8 @@ cora.Controller = {
                 var studentId = view.data('studentId');
                 if (typeof noteId !== 'undefined' && noteId != '')
                 {
-                    $.mobile.changePage('#dialog-confirm-delete?nid='+noteId+'&sid='+studentId, {
-                        transition: 'pop',
-                        reverse: false,
-                        changeHash: false
+                    cora.showDialog(confirmDeleteDialog, {
+                        params: { nid: noteId, sid: studentId }
                     });
                 }
                 return false;
@@ -1303,21 +1301,13 @@ cora.Controller = {
                     }
                     else
                     {
-                        $.mobile.changePage('#dialog-object-doesnt-exist', {
-                            transition: 'pop',
-                            reverse: false,
-                            changeHash: false
-                        });				
+                        cora.showDialog(objectDoesntExistDialog);			
                     }
                 });
             }
             else
             {
-                $.mobile.changePage('#dialog-no-object-specified', {
-                    transition: 'pop',
-                    reverse: false,
-                    changeHash: false
-                });
+                cora.showDialog(noObjectSpecifiedDialog);
             }
         });
 	},
