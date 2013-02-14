@@ -15,3 +15,4 @@ Changelog
 * Changed buttons around on #options-manage-tags-view (tinyissue#37) - mf
 * Disabled autocorrect on tag-suggestion-enabled fields - mf
 * New View objects and ControllerAction function to provide looser coupling to jQuery (tinyissue#121)- mf
+* Clicking cancel button on note form now launches a confirmation dialog if changes made - mf
