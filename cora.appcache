@@ -15,15 +15,16 @@
 # 
 # http://fasdoutreach.ca/~cora/LICENSE.TXT
 #
+# Serial 2013021401
 
 CACHE MANIFEST
 index.html
-assets/themes/jquery.mobile-1.0.1.min.css
+assets/themes/jquery.mobile-1.2.0.min.css
 assets/themes/cora.min.css
 assets/css/main.css
-assets/js/jquery-1.7.min.js
+assets/js/jquery-1.9.0.min.js
 assets/js/jquery.mobile.router.min.js
-assets/js/jquery.mobile-1.0.1.min.js
+assets/js/jquery.mobile-1.2.0.min.js
 assets/js/persistence.js
 assets/js/persistence.store.sql.js
 assets/js/persistence.store.websql.js
