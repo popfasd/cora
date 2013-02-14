@@ -16,6 +16,7 @@
  * http://cora.fasdoutreach.ca/LICENSE.txt
  *
  * @author Matt Ferris <mferris@sd57.bc.ca>
+ * @version 1.0
  */
 
 /*

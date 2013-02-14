@@ -63,3 +63,10 @@ create `hotfix-1.2.1`. When the hotfix is finished, it must be merged back into
     # git merge --no-ff hotfix-1.2.1
     # git branch -d hotfix-1.2.1
 
+Preparing a release
+-------------------
+
+* Create a release branch
+* Change "@version" in assets/js/cora.js
+* Change version on #options-about page in index.html
+* Uncomment "console.log = function () {};" in assets/js/cora.js
