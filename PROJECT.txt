@@ -1,16 +1,16 @@
 Project
 =======
 
-This document is written using [markdown][1] syntax.
+This document is written using [markdown][] syntax.
 
-[1]: http://daringfireball.net/projects/markdown/
+[markdown]: http://daringfireball.net/projects/markdown/
 
 Git Branching Model
 -------------------
 
-See [this post on nvie.com][2] for more about this model.
+See [nvie.com][] for more about this model.
 
-[2]: http://nvie.com/posts/a-successful-git-branching-model
+[nvie.com]: http://nvie.com/posts/a-successful-git-branching-model
 
 The `master` branch is for tagged releases only. The `develop` branch is where
 all changes are merged into. A `release` branch is forked from `develop` to
@@ -79,8 +79,8 @@ Preparing a release
 Cora website
 ------------
 
-The site lives in /var/www/cora on the webserver. It uses some PHP so that
+The site lives in 1/var/www/cora1 on the webserver. It uses some PHP so that
 pages can be written in markdown. The main site content is in the `pages/`
-directory. The `app/` directory the live stable version of the app. The `dev/`
-directory contains the nightly snapshop of the app (automatically updated view
-cron using `~mferris/bin/cora-dev-update`).
+directory. The `app/` directory is the live stable version of the app. The
+`dev/` directory contains the nightly snapshop of the app (automatically
+updated via cron using `~mferris/bin/cora-dev-update`).
