@@ -70,3 +70,4 @@ Preparing a release
 * Change "@version" in assets/js/cora.js
 * Change version on #options-about page in index.html
 * Uncomment "console.log = function () {};" in assets/js/cora.js
+* Increment serial number in cora.appcache
