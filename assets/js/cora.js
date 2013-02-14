@@ -493,7 +493,7 @@ cora.View = function (id, my) {
         }
         else
         {
-            my.view.removeData(k);
+            my.view.removeData('cora.data.'+name);
         }
         return that;
     };
@@ -913,6 +913,8 @@ cora.Controller = {
             var ctlr = this;
             var view = ctlr.view;
             var params = ctlr.params;
+            var studentId = params.sid;
+            var noteId = params.nid;
 
             var confirmCancelDialog = cora.DialogView('confirm-cancel');
             var objectDoesntExistDialog = cora.DialogView('object-doesnt-exist');
@@ -958,7 +960,7 @@ cora.Controller = {
                 view.data('noteText', contentField.val())
                     .data('noteTags', tagField.val());
             });
-            
+
             // load any saved data
             if (view.data('noteText') || view.data('noteTags'))
             {
@@ -967,18 +969,18 @@ cora.Controller = {
                 view.clearData('noteText').clearData('noteTags');
             }
 
-            var noteId = params.nid;
             if (typeof noteId === 'undefined' || noteId === '')
             {
                 /*
                  * We're adding a new note
                  */
                 viewTitle.html('Add note');
-                var studentId = params.sid;
                 if (typeof studentId !== 'undefined' && studentId !== '')
                 {
-                    // set nextUrl cancel dialog
-                    confirmCancelDialog.data('nextUrl', '#student?sid='+studentId);
+                    // setup cancel dialog
+                    confirmCancelDialog
+                        .data('nextUrl', '#student?sid='+studentId)
+                        .getChild('button-no').attr('href', '#note-form?sid='+studentId);
 
                     /*
                      * A student was specified, so retrieve and load into the form
@@ -1007,6 +1009,12 @@ cora.Controller = {
                  * We're editing a note
                  */
                 viewTitle.html('Edit note');
+
+                // setup cancel dialog
+                confirmCancelDialog
+                    .data('nextUrl', '#note?sid='+studentId+'&nid='+noteId)
+                    .getChild('button-no').attr('href', '#note-form?sid='+studentId+'&nid='+noteId);
+
                 cora.getNoteById(noteId, function (note) {
                     if (note !== null)
                     {
@@ -1015,15 +1023,15 @@ cora.Controller = {
                             confirmCancelDialog
                                 .data('noteId', note.id)
                                 .data('studentId', student.id);
-                            noteIdField.attr('value', note.id);
+                            noteIdField.val(note.id);
                             studentNameField
                                 .val(student.firstName+' '+student.lastName)
                                 .attr('disabled', 'disabled');
-                            contentField.attr('value', note.content);
+                            contentField.val(note.content);
                             note.tags.list(function (tags) {
                                 var taglist = [];
                                 for (var i=0; i<tags.length; i++) taglist.push(tags[i].name);
-                                tagField.attr('value', taglist.join(', '));
+                                tagField.val(taglist.join(', '));
                             });
                         });
                     }
@@ -1219,7 +1227,7 @@ cora.Controller = {
 	 */
 	onBeforeShowDialogConfirmCancel: function ( type, match, ui )
 	{
-        cora.ControllerAction(type, match, ui, function () {
+        cora.ControllerAction(type, match, ui, 'dialog-confirm-cancel', function () {
             var ctlr = this;
             var view = ctlr.view;
 
@@ -1232,10 +1240,6 @@ cora.Controller = {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 cora.redirect(nextUrl, { transition: 'pop', reverse: true, changeHash: true });
-            });
-            
-            noButton.click(function () {
-                view.close();
             });
         });
 	},
