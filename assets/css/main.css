@@ -99,9 +99,15 @@ div[data-role="content"] .message {
 	font-weight: bold;
 }
 
-#note div[data-role="content"] {
+#note div[data-role="content"],
+#options-manage-tags-view div[data-role="content"] {
 	padding-left: 0;
 	padding-right: 0;
+}
+
+#options-manage-tags-view form {
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 div.note-header {

@@ -1463,13 +1463,20 @@ cora.Controller = {
             var form = view.getChild('form');
             var tagIdField = view.getChild('form-tag-id');
             var tagNameField = view.getChild('form-tag-name');
-            var deleteButton = view.getChild('form-button-delete');
+
+            var deleteButton = view.getChild('button-delete');
+            var submitButton = view.getChild('button-submit');
 
             // bind to submit handler
             form.submit(cora.Controller.onSubmitShowManageTagsForm);
+            
+            submitButton.click(function (e) {
+                e.preventDefault();
+                form.submit()
+            });
+            deleteButton.attr('href', '#options-manage-tags-delete?tid='+tagId);
 
             tagIdField.val(tagId);
-            deleteButton.attr('href', '#options-manage-tags-delete?tid='+tagId);
 
             cora.getTagById(tagId, function (tag) {
                 tagNameField.val(tag.name);
@@ -1483,7 +1490,7 @@ cora.Controller = {
 	{
         var view = cora.PageView('options-manage-tags-view');
 
-        var tagField = view.getChild('form-tag-id');
+        var tagIdField = view.getChild('form-tag-id');
         var tagNameField = view.getChild('form-tag-name');
 
 		var tagId = tagIdField.val();
