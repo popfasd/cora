@@ -1555,7 +1555,7 @@ cora.Controller = {
         cora.ControllerAction(type, match, ui, 'options-reports', function () {
             var ctlr = this;
             var view = ctlr.view;
-            var resultsView = cora.PageView('options-reports-resutls');
+            var resultsView = cora.PageView('options-reports-results');
 
             var form = view.getChild('form');
             var tagSuggestionsList = view.getChild('form-tags-suggestions ul');
