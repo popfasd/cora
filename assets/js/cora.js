@@ -1465,12 +1465,12 @@ cora.Controller = {
             var tagNameField = view.getChild('form-tag-name');
 
             var deleteButton = view.getChild('button-delete');
-            var submitButton = view.getChild('button-submit');
+            var saveButton = view.getChild('button-save');
 
             // bind to submit handler
             form.submit(cora.Controller.onSubmitShowManageTagsForm);
             
-            submitButton.click(function (e) {
+            saveButton.click(function (e) {
                 e.preventDefault();
                 form.submit()
             });
