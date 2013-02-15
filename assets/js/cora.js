@@ -1053,6 +1053,7 @@ cora.Controller = {
 		e.stopImmediatePropagation();
 
         var view = cora.PageView('note-form');
+        var studentView = cora.PageView('student');
         var manageTagsView = cora.PageView('options-manage-tags');
 
         var objectDoesntExistDialog = cora.DialogView('object-doesnt-exist');
@@ -1147,7 +1148,7 @@ cora.Controller = {
                                     }
                                 }
 								cora.persistence.flush(function () {
-                                    manageTagsView.markDirty();
+                                    studentView.markDirty();
 									note.fetch('student', function (student) {
 										cora.redirect('#note?sid='+student.id+'&nid='+note.id, {
 											reverse: true, changeHash: false
@@ -1199,7 +1200,7 @@ cora.Controller = {
 								}
 							}
 							cora.persistence.flush(function () {
-                                manageTagsView.markDirty();
+                                studentView.markDirty();
 								cora.redirect('#student?sid='+student.id, { reverse: true });
 							});
 						});
