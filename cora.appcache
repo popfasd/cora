@@ -13,9 +13,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # 
-# http://fasdoutreach.ca/~cora/LICENSE.TXT
+# http://cora.fasdoutreach.ca/LICENSE.TXT
 #
-# Serial 2013021401
+# Serial 2013021501
 
 CACHE MANIFEST
 index.html
@@ -23,6 +23,7 @@ assets/themes/jquery.mobile-1.2.0.min.css
 assets/themes/cora.min.css
 assets/css/main.css
 assets/js/jquery-1.9.0.min.js
+assets/js/jquery-migrate-1.0.0.min.js
 assets/js/jquery.mobile.router.min.js
 assets/js/jquery.mobile-1.2.0.min.js
 assets/js/persistence.js

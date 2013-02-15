@@ -16,13 +16,13 @@
  * http://cora.fasdoutreach.ca/LICENSE.txt
  *
  * @author Matt Ferris <mferris@sd57.bc.ca>
- * @version 1.0
+ * @version 1.1
  */
 
 /*
  * Quiet all console.log messages
  */
-//console.log = function () {};
+console.log = function () {};
  
 /*
  * Add trim to String for browsers that don't yet use EMCAScript5
