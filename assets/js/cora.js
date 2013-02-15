@@ -1599,7 +1599,7 @@ cora.Controller = {
 
         var criteriaContainer = resultsView.getChild('criteria');
         var dataContainer = resultsView.getChild('data');
-        var refineButton = resutlsView.getChild('button-refine');
+        var refineButton = resultsView.getChild('button-refine');
 
 		var formTags = resultsView.data('tags');
         formTags = formTags.split(',');
