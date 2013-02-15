@@ -1463,11 +1463,14 @@ cora.Controller = {
             var form = view.getChild('form');
             var tagIdField = view.getChild('form-tag-id');
             var tagNameField = view.getChild('form-tag-name');
-            var deleteButton = view.getChild('button-delete');
+            var deleteButton = view.getChild('form-button-delete');
 
+            // bind to submit handler
             form.submit(cora.Controller.onSubmitShowManageTagsForm);
+
             tagIdField.val(tagId);
             deleteButton.attr('href', '#options-manage-tags-delete?tid='+tagId);
+
             cora.getTagById(tagId, function (tag) {
                 tagNameField.val(tag.name);
             });
