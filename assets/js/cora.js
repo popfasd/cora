@@ -1329,6 +1329,8 @@ cora.Controller = {
             var noteId = params.nid;
             var studentId = params.sid;
 
+            var studentView = cora.PageView('student');
+
             var deleteButton = view.getChild('button-delete');
             var cancelButton = view.getChild('button-cancel');
 
@@ -1341,6 +1343,7 @@ cora.Controller = {
                     cora.getNoteById(noteId, function (note) {
                         cora.removeNote(note);
                         persistence.flush(function () {
+                            studentView.markDirty();
                             cora.redirect('#student?sid='+studentId, {
                                 transition: 'pop', reverse: true
                             });
