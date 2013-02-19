@@ -1598,7 +1598,7 @@ cora.Controller = {
         e.stopImmediatePropagation();
 
         var resultsView = cora.PageView('options-reports-results');
-        var formView = cora.PageView('options-reports');
+        var formView = cora.PageView('options-reports-form');
 
         var criteriaContainer = resultsView.getChild('criteria');
         var dataContainer = resultsView.getChild('data');
