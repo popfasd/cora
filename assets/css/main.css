@@ -13,10 +13,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * http://fasdoutreach.ca/~cora/LICENSE.TXT
+ * http://fasdoutreach.ca/cora/LICENSE.TXT
  *
  * @author Matt Ferris <mferris@sd57.bc.ca>
- * @version alpha
  */
 
 /* 
@@ -30,11 +29,15 @@ textarea {
 	margin: 0 0 10px 0;
 }
 
+#home-disclaimer {
+    padding-top: 25px;
+}
+
 #note-form textarea {
 	height: 150px;
 }
 
-#note-form-tags-suggestions {
+.tag-suggestions {
 	margin-top: -11px;
 	margin-left: 5px;
 	position: relative;
@@ -42,7 +45,7 @@ textarea {
 	margin-right: 5px;
 }
 
-#note-form-tags-suggestions > ul {
+.tag-suggestions > ul[data-role="listview"] {
 	position: fixed;
 	padding: 0;
 	margin: 0;
@@ -59,7 +62,7 @@ textarea {
 	height: 30px;
 }
 
-#note-form-tags-suggestions > ul li{
+.tag-suggestions > ul[data-role="listview"]  li {
 	list-style: none;
 	float: left;
 	border-right: solid #ccc 1px;
@@ -67,7 +70,7 @@ textarea {
 	padding-right: 10px;
 }
 
-#note-form-tags-suggestions > ul li a {
+.tag-suggestions > ul[data-role="listview"]  li a {
 	text-decoration: none;
 	color: #666;
 	font-weight: bold;
@@ -96,17 +99,23 @@ div[data-role="content"] .message {
 	font-weight: bold;
 }
 
-#note div[data-role="content"] {
+#note div[data-role="content"],
+#options-manage-tags-view div[data-role="content"] {
 	padding-left: 0;
 	padding-right: 0;
 }
 
-#note div.note-header {
+#options-manage-tags-view form {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+div.note-header {
 	padding-left: 15px;
 	padding-right: 15px;
 }
 
-#note p.note-student {
+p.note-student {
 	font-size: 1.2em;
 	font-weight: bold;
 	margin-top: 0;
@@ -115,18 +124,18 @@ div[data-role="content"] .message {
 	padding-bottom: 0;
 }
 
-#note p.note-created {
+p.note-created {
 	margin: 0;
 	padding: 0;
 }
 
-#note p.note-tags {
+p.note-tags {
 	margin-top: 0;
 	padding-top: 0;
 	color: #888;
 }
 
-#note p.note-content {
+p.note-content {
 	padding: 15px;
 	border-top: solid 1px #ccc;
 }
