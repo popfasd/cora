@@ -43,6 +43,7 @@ textarea {
 	position: relative;
 	z-index: 1000;
 	margin-right: 5px;
+    margin-bottom: 20px;
 }
 
 .tag-suggestions > ul[data-role="listview"] {
