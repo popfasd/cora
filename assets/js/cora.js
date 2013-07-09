@@ -953,9 +953,10 @@ cora.Controller = {
             });
 
             // hide tag suggestions when focus changes to any field
-            view.find('*').focusin(function () {
-                tagSuggestionsList.hide();
-            });
+            var focusinfx = function () { tagSuggestionsList.hide(); };
+            studentNameField.focusin(focusinfx);
+            tagField.focusin(focuisfx);
+            contentField.focusin(focusinfx);
                  
             // bind to submit
             view.getChild('form').submit(cora.Controller.onSubmitNoteForm);
