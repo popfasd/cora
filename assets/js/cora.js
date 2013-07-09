@@ -520,7 +520,15 @@ cora.View = function (id, my) {
     };
     
     that.find = function ( selector ) {
-        return my.view.find(selector);
+        if (selector.charAt(0) == '#')
+        {
+            // if we're looking for an id, it's faster to skip .find()
+            return $(selector);
+        }
+        else
+        {
+            return my.view.find(selector);
+        }
     };
     
     return that;
@@ -646,9 +654,6 @@ cora.Controller = {
                 return;
             }
             
-            view.find('form.ui-listview-filter input[data-type="search"]').val('');
-            view.find('form.ui-listview-filter a.ui-input-clear').addClass('ui-input-clear-hidden');
-            
             cora.getAllStudents(function (students) {
                 /*
                  * Determine sort order of list
@@ -690,8 +695,9 @@ cora.Controller = {
                     }
                     html += '<li><a href="#student?sid='+s.id+'">'+name+'</a></li>';
                 }
-                view.find('div[data-role="content"] > ul').html(html);
-                view.find('div[data-role="content"] > ul').listview('refresh');
+                var studentList = view.find('#home-student-list');
+                studentList.html(html);
+                studentList.listview('refresh');
             });
             view.markClean();
         });
