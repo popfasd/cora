@@ -1275,10 +1275,10 @@ cora.Controller = {
             var backButton = view.getChild('button-back');
             var editButton = view.getChild('button-edit');
 
-            var studentContainer = view.find('p.note-student');
-            var createdContainer = view.find('p.note-created');
-            var contentContainer = view.find('p.note-content');
-            var tagsContainer = view.find('p.note-tags');
+            var studentContainer = view.getChild('student');
+            var createdContainer = view.getChild('created');
+            var contentContainer = view.getChild('content');
+            var tagsContainer = view.getChild('tags');
 
             deleteButton.click(function (e) {
                 e.preventDefault();

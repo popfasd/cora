@@ -111,12 +111,12 @@ div[data-role="content"] .message {
     padding-right: 15px;
 }
 
-div.note-header {
+div#note-header {
 	padding-left: 15px;
 	padding-right: 15px;
 }
 
-p.note-student {
+p#note-student {
 	font-size: 1.2em;
 	font-weight: bold;
 	margin-top: 0;
@@ -125,18 +125,18 @@ p.note-student {
 	padding-bottom: 0;
 }
 
-p.note-created {
+p#note-created {
 	margin: 0;
 	padding: 0;
 }
 
-p.note-tags {
+p#note-tags {
 	margin-top: 0;
 	padding-top: 0;
 	color: #888;
 }
 
-p.note-content {
+p#note-content {
 	padding: 15px;
 	border-top: solid 1px #ccc;
 }
