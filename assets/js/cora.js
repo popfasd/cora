@@ -424,7 +424,8 @@ cora.suggestTags = function (inputValue, formId)
 				for (var i=0; i<taglist.length; i++) taglist[i] = taglist[i].trim();
 				taglist.pop();
 				taglist.push(tag);
-				$(formId+'-tags').val(taglist.join(', '));
+				$(formId+'-tags').val(taglist.join(', ')+', ');
+                $(formId+'-tags').focus();
 				$(formId+'-tags-suggestions ul').hide();
 			});
 		});
