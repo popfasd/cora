@@ -380,7 +380,8 @@ cora.suggestTags = function (inputValue, formId)
 	if (tag != '')
 	{
 		cora.Tag.all().filter('name', 'like', tag+'%').list(function (tags) {
-			$(formId+'-tags-suggestions ul').empty();
+            var tagSuggestionList = $(formId+'-tags-suggestions-list');
+			tagSuggestionList.empty();
 			var numSuggestions = 0;
 			var maxSuggestions = 5;
 			for (var i=0; i<tags.length; i++)
@@ -402,7 +403,7 @@ cora.suggestTags = function (inputValue, formId)
 					if (numSuggestions < maxSuggestions)
 					{
 						numSuggestions++;
-						$(formId+'-tags-suggestions ul').append(
+						tagSuggestionList.append(
 							'<li><a href="#">'+tags[i].name+'</li>'
 						);
 					}
@@ -413,20 +414,21 @@ cora.suggestTags = function (inputValue, formId)
 				}
 			}
 			/*$('#note-form-tags-suggestions ul').listview('refresh');*/
-			$(formId+'-tags-suggestions ul').show();
+			tagSuggestionList.show();
 			cora.suggestTagsTimeout = null;
 			$(formId+'-tags-suggestions a').click(function (e) {
 				e.preventDefault();
 				e.stopImmediatePropagation();
 				var tag = $(this).html();
-				var taglist = $(formId+'-tags').val();
-				taglist = taglist.split(',');
-				for (var i=0; i<taglist.length; i++) taglist[i] = taglist[i].trim();
-				taglist.pop();
-				taglist.push(tag);
-				$(formId+'-tags').val(taglist.join(', ')+', ');
-                $(formId+'-tags').focus();
-				$(formId+'-tags-suggestions ul').hide();
+                var tagList = $(formId+'-tags');
+				var tags = tagList.val();
+				tags = tags.split(',');
+				for (var i=0; i<tags.length; i++) tags[i] = tags[i].trim();
+				tags.pop();
+				tags.push(tag);
+				tagList.val(tags.join(', ')+', ');
+                tagList.focus();
+				tagSuggestionList.hide();
 			});
 		});
 	}
