@@ -419,12 +419,12 @@ cora.suggestTags = function (inputValue, formId)
 				e.preventDefault();
 				e.stopImmediatePropagation();
 				var tag = $(this).html();
-				var taglist = $(formId+'-tags').attr('value');
+				var taglist = $(formId+'-tags').val();
 				taglist = taglist.split(',');
 				for (var i=0; i<taglist.length; i++) taglist[i] = taglist[i].trim();
 				taglist.pop();
 				taglist.push(tag);
-				$(formId+'-tags').attr('value', taglist.join(', '));
+				$(formId+'-tags').val(taglist.join(', '));
 				$(formId+'-tags-suggestions ul').hide();
 			});
 		});
@@ -643,7 +643,7 @@ cora.Controller = {
                 return;
             }
             
-            view.find('form.ui-listview-filter input[data-type="search"]').attr('value', '');
+            view.find('form.ui-listview-filter input[data-type="search"]').val('');
             view.find('form.ui-listview-filter a.ui-input-clear').addClass('ui-input-clear-hidden');
             
             cora.getAllStudents(function (students) {
@@ -1566,7 +1566,7 @@ cora.Controller = {
             tagsField.keyup(function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                var inputValue = $(this).attr('value');
+                var inputValue = $(this).val();
                 if (cora.suggestTagsTimeout !== null)
                 {
                     clearTimeout(cora.suggestTagsTimeout);
