@@ -955,7 +955,7 @@ cora.Controller = {
             // hide tag suggestions when focus changes to any field
             var focusinfx = function () { tagSuggestionsList.hide(); };
             studentNameField.focusin(focusinfx);
-            tagField.focusin(focuisfx);
+            tagField.focusin(focusinfx);
             contentField.focusin(focusinfx);
                  
             // bind to submit
@@ -1366,11 +1366,16 @@ cora.Controller = {
                     e.preventDefault();
                     e.stopImmediatePropagation();
                     cora.getStudentById(studentId, function (student) {
-                        cora.removeStudent(student);
-                        persistence.flush(function () {
-                            cora.PageView('home').markDirty();
-                            cora.redirect('#home', {
-                                transition: 'pop', reverse: true
+                        student.notes.list(function (notes) {
+                            for (var i=0; i<notes.length; i++) {
+                                cora.removeNote(notes[i]);
+                            }
+                            cora.removeStudent(student);
+                            persistence.flush(function () {
+                                cora.PageView('home').markDirty();
+                                cora.redirect('#home', {
+                                    transition: 'pop', reverse: true
+                                });
                             });
                         });
                         return false;
