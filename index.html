@@ -45,7 +45,7 @@
 				<a id="home-button-student" class="ui-btn-right" data-icon="plus" data-direction="forward" data-iconpos="notext" href="#student-form">Add Student</a>
 			</div><!-- /header -->
 			<div data-role="content">
-				<ul data-role="listview" data-filter="true" data-filter-placeholder="Filter students...">
+				<ul id="home-student-list" data-role="listview" data-filter="true" data-filter-placeholder="Filter students...">
 				</ul>
                 <p id="home-disclaimer">DISCLAIMER: The following application was designed to assist you in your work with students. Your use of this app should be in compliance with the Freedom of Information and Privacy policies of your jurisdiction</p>
 			</div><!-- /content -->
@@ -107,7 +107,7 @@
 					<label id="note-form-tags-label" for="tags">Tags (optional)</label>
 					<input id="note-form-tags" autocorrect="off" type="text" name="tags" />
 					<div id="note-form-tags-suggestions" class="tag-suggestions">
-						<ul data-role="listview">
+						<ul id="note-form-tags-suggestions-list" data-role="listview">
 						</ul>
 					</div>
 					<label id="note-form-content-label" for="content">Note</label>
@@ -128,12 +128,12 @@
 				<a class="ui-btn-left" data-icon="home" data-iconpos="notext" data-direction="reverse" href="#home">Home</a>
 			</div><!-- /header -->
 			<div data-role="content">
-				<div class="note-header">
-					<p class="note-student"></p>
-					<p class="note-created"></p>
-					<p class="note-tags"></p>
+				<div id="note-header">
+					<p id="note-student"></p>
+					<p id="note-created"></p>
+					<p id="note-tags"></p>
 				</div>
-				<p class="note-content"></p>
+				<p id="note-content"></p>
 				<div class="ui-grid-b">
 					<div class="ui-block-a"><a id="note-button-back" data-role="button" data-direction="reverse" href="#student">Back</a></div>
 					<div class="ui-block-b"><a id="note-button-edit" data-role="button" direction="forward" href="#note-form">Edit</a></div>

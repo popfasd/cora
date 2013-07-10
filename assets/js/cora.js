@@ -380,7 +380,8 @@ cora.suggestTags = function (inputValue, formId)
 	if (tag != '')
 	{
 		cora.Tag.all().filter('name', 'like', tag+'%').list(function (tags) {
-			$(formId+'-tags-suggestions ul').empty();
+            var tagSuggestionList = $(formId+'-tags-suggestions-list');
+			tagSuggestionList.empty();
 			var numSuggestions = 0;
 			var maxSuggestions = 5;
 			for (var i=0; i<tags.length; i++)
@@ -402,7 +403,7 @@ cora.suggestTags = function (inputValue, formId)
 					if (numSuggestions < maxSuggestions)
 					{
 						numSuggestions++;
-						$(formId+'-tags-suggestions ul').append(
+						tagSuggestionList.append(
 							'<li><a href="#">'+tags[i].name+'</li>'
 						);
 					}
@@ -413,20 +414,21 @@ cora.suggestTags = function (inputValue, formId)
 				}
 			}
 			/*$('#note-form-tags-suggestions ul').listview('refresh');*/
-			$(formId+'-tags-suggestions ul').show();
+			tagSuggestionList.show();
 			cora.suggestTagsTimeout = null;
 			$(formId+'-tags-suggestions a').click(function (e) {
 				e.preventDefault();
 				e.stopImmediatePropagation();
 				var tag = $(this).html();
-				var taglist = $(formId+'-tags').val();
-				taglist = taglist.split(',');
-				for (var i=0; i<taglist.length; i++) taglist[i] = taglist[i].trim();
-				taglist.pop();
-				taglist.push(tag);
-				$(formId+'-tags').val(taglist.join(', ')+', ');
-                $(formId+'-tags').focus();
-				$(formId+'-tags-suggestions ul').hide();
+                var tagList = $(formId+'-tags');
+				var tags = tagList.val();
+				tags = tags.split(',');
+				for (var i=0; i<tags.length; i++) tags[i] = tags[i].trim();
+				tags.pop();
+				tags.push(tag);
+				tagList.val(tags.join(', ')+', ');
+                tagList.focus();
+				tagSuggestionList.hide();
 			});
 		});
 	}
@@ -518,7 +520,15 @@ cora.View = function (id, my) {
     };
     
     that.find = function ( selector ) {
-        return my.view.find(selector);
+        if (selector.charAt(0) == '#')
+        {
+            // if we're looking for an id, it's faster to skip .find()
+            return $(selector);
+        }
+        else
+        {
+            return my.view.find(selector);
+        }
     };
     
     return that;
@@ -644,9 +654,6 @@ cora.Controller = {
                 return;
             }
             
-            view.find('form.ui-listview-filter input[data-type="search"]').val('');
-            view.find('form.ui-listview-filter a.ui-input-clear').addClass('ui-input-clear-hidden');
-            
             cora.getAllStudents(function (students) {
                 /*
                  * Determine sort order of list
@@ -688,8 +695,9 @@ cora.Controller = {
                     }
                     html += '<li><a href="#student?sid='+s.id+'">'+name+'</a></li>';
                 }
-                view.find('div[data-role="content"] > ul').html(html);
-                view.find('div[data-role="content"] > ul').listview('refresh');
+                var studentList = view.find('#home-student-list');
+                studentList.html(html);
+                studentList.listview('refresh');
             });
             view.markClean();
         });
@@ -945,9 +953,10 @@ cora.Controller = {
             });
 
             // hide tag suggestions when focus changes to any field
-            view.find('*').focusin(function () {
-                tagSuggestionsList.hide();
-            });
+            var focusinfx = function () { tagSuggestionsList.hide(); };
+            studentNameField.focusin(focusinfx);
+            tagField.focusin(focuisfx);
+            contentField.focusin(focusinfx);
                  
             // bind to submit
             view.getChild('form').submit(cora.Controller.onSubmitNoteForm);
@@ -1266,10 +1275,10 @@ cora.Controller = {
             var backButton = view.getChild('button-back');
             var editButton = view.getChild('button-edit');
 
-            var studentContainer = view.find('p.note-student');
-            var createdContainer = view.find('p.note-created');
-            var contentContainer = view.find('p.note-content');
-            var tagsContainer = view.find('p.note-tags');
+            var studentContainer = view.getChild('student');
+            var createdContainer = view.getChild('created');
+            var contentContainer = view.getChild('content');
+            var tagsContainer = view.getChild('tags');
 
             deleteButton.click(function (e) {
                 e.preventDefault();
