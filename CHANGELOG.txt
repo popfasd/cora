@@ -8,7 +8,11 @@ Changelog
 * Updated to jQuery 2.0.3 and jQuery Mobile 1.3.1 - mf
 * Tag field on Add Note screen has been moved above the Note field - mf
 * Changed .attr('value') calls to use .val() instead - mf
-* Clicking a tag suggestion adds the tag plus a comma and puts focus back on the tag field - mf
+* Clicking a tag suggestion adds the tag plus a comma and puts focus back on the tag field (tinyissue#163) - mf
+* Updated to persistence.js 0.3.0 - mf
+* Optimized jquery query selections to improve performance - mf
+* Fixed issue where deleting a student actually deleted the first student in the home list instead (tinyissue#170) - mf
+* Deleting student deletes associated notes, preventing unwanted behaviour with reporting - mf
 
 1.1
 ---
