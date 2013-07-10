@@ -1605,11 +1605,6 @@ cora.Controller = {
 		var formTags = resultsView.data('tags');
         formTags = formTags.split(',');
 
-        // reset content
-        criteriaContainer.html(
-            'Displaying all notes tagged with <i>'+formTags.join('</i> and <i>')+'</i>'
-        );
-
         refineButton.click(function (e) {
             e.preventDefault();
 			e.stopImmediatePropagation();
@@ -1620,10 +1615,11 @@ cora.Controller = {
         });
 
         var tagsqc = cora.Tag.all();
+        var criteria = [];
         for (var i=0; i<formTags.length; i++)
         {
             var tagName = formTags[i];
-            if (tagName == '') continue
+            if (tagName == '' || tagName.match(/^\s+$/)) continue
             if (i === 0)
             {
                 tagsqc = tagsqc.filter('name', '=', tagName);
@@ -1632,13 +1628,20 @@ cora.Controller = {
             {
                 tagsqc = tagsqc.and(new persistence.PropertyFilter('name', '=', tagName));
             }
+            criteria.push(tagName);
         }
+
+        // reset content
+        criteriaContainer.html(
+            'Displaying all notes tagged with <i>'+criteria.join('</i> and <i>')+'</i>'
+        );
 
         tagsqc.list(function (tags) {
             if (tags.length === 0)
             {
                 dataContainer.html('<p><i>No matching notes found</i></p>');
             }
+            var studentNotesLists = {};
             for (var i=0; i<tags.length; i++)
             {
                 var tag = tags[i];
@@ -1646,24 +1649,25 @@ cora.Controller = {
                     for (var j=0; j<notes.length; j++)
                     {
                         var note = notes[j];
-                        var studentNotes = $('#sid-'+note.student.id+' ul');
-                        if (studentNotes.length === 0)
+                        //var studentNotesList = $('#sid-'+note.student.id+' ul');
+                        if (typeof studentNotesLists[note.student.id] === 'undefined')
                         {
                             dataContainer.append(
                                 '<div id="sid-'+note.student.id+'" data-role="collapsible" data-inset="false">'+
                                 '<h2>'+note.student.firstName+' '+note.student.lastName+'</h2>'+
                                 '<ul data-role="listview"></ul></div>'
                             );
-                            var studentNotes = $('#sid-'+note.student.id+' ul');
-                            $('#sid-'+note.student.id).collapsible();
-                            studentNotes.listview();
+                            var studentNotes = $('#sid-'+note.student.id);
+                            studentNotes.collapsible();
+                            studentNotesLists[note.student.id] = studentNotes.find('ul');
+                            studentNotesLists[note.student.id].listview();
                         }
-                        studentNotes.append(
+                        studentNotesLists[note.student.id].append(
                             '<li>'+
                             '<p class="note-time">'+cora.Date(note.created).getNoteTimeAsString()+'</p>'+
 							'<p class="note-teaser">'+note.content+'</p></a></li>'
                         );
-                        studentNotes.listview('refresh');
+                        studentNotesLists[note.student.id].listview('refresh');
                     }
                 });               
             }
