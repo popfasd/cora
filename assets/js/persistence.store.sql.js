@@ -95,6 +95,9 @@ var defaultTypeMapper = {
       val = new Date(val);
       return Math.round(val.getTime() / 1000);
     }
+    else if(type === 'VARCHAR(32)'){
+      return val.toString();
+    }
     else {
       return val;
     }
@@ -675,7 +678,7 @@ function config(persistence, dialect) {
       sql += " ORDER BY "
       + this._orderColumns.map(
         function (c) {
-          return "`" + mainPrefix + c[0] + "` "
+          return (c[2] ? "`" : "LOWER(`") + mainPrefix + c[0] + (c[2] ? "` " : "`) ")
           + (c[1] ? "ASC" : "DESC");
         }).join(", ");
     }

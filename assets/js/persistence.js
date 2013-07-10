@@ -28,11 +28,23 @@ if (typeof exports !== 'undefined') {
 		return initPersistence({})
 	}
 	var singleton;
-	exports.__defineGetter__("persistence", function () {
-    	if (!singleton)
-	  		singleton = exports.createPersistence();
-	  	return singleton;
-	});
+	if (typeof (exports.__defineGetter__) === 'function') {
+	    exports.__defineGetter__("persistence", function () {
+	        if (!singleton)
+	            singleton = exports.createPersistence();
+	        return singleton;
+	    });
+	} else {
+	    Object.defineProperty(exports, "persistence", {
+	        get: function () {
+	            if (!singleton)
+	                singleton = exports.createPersistence();
+	            return singleton;
+	        },
+	        enumerable: true, configurable: true
+	    });
+	}
+
 }
 else {
 	window = window || {};
@@ -55,12 +67,22 @@ persistence.isImmutable = function(fieldName) {
  * Default implementation for entity-property
  */
 persistence.defineProp = function(scope, field, setterCallback, getterCallback) {
-  scope.__defineSetter__(field, function (value) {
-      setterCallback(value);
-    });
-  scope.__defineGetter__(field, function () {
-      return getterCallback();
-    });
+    if (typeof (scope.__defineSetter__) === 'function' && typeof (scope.__defineGetter__) === 'function') {
+        scope.__defineSetter__(field, function (value) {
+            setterCallback(value);
+        });
+        scope.__defineGetter__(field, function () {
+            return getterCallback();
+        });
+    } else {
+        Object.defineProperty(scope, field, {
+            get: getterCallback,
+            set: function (value) {
+                setterCallback(value);
+            },
+            enumerable: true, configurable: true
+        });
+    }
 };
 
 /**
@@ -277,10 +299,14 @@ persistence.get = function(arg1, arg2) {
      * @param obj object to be removed
      */
     persistence.remove = function(obj) {
-      if (!this.objectsToRemove[obj.id]) {
-        this.objectsToRemove[obj.id] = obj;
+      if (obj._new) {
+        delete this.trackedObjects[obj.id];
+      } else {
+        if (!this.objectsToRemove[obj.id]) {
+          this.objectsToRemove[obj.id] = obj;
+        }
+        this.objectsRemoved.push({id: obj.id, entity: obj._type});
       }
-      this.objectsRemoved.push({id: obj.id, entity: obj._type});
       this.objectRemoved(obj);
       return this;
     };
@@ -459,7 +485,7 @@ persistence.get = function(arg1, arg2) {
                       that._data_obj[ref] = session.trackedObjects[that._data[ref]];
                       return that._data_obj[ref];
                     } else {
-                      throw new Error("Property '" + ref + "' with id: " + that._data[ref] + " not fetched, either prefetch it or fetch it manually.");
+                      throw new Error("Property '" + ref + "' of '" + meta.name + "' with id: " + that._data[ref] + " not fetched, either prefetch it or fetch it manually.");
                     }
                   });
               }());
@@ -1286,8 +1312,10 @@ persistence.get = function(arg1, arg2) {
         var el = ar[i];
         if(el.equals && el.equals(item)) {
           ar.splice(i, 1);
+          return;
         } else if(el === item) {
           ar.splice(i, 1);
+          return;
         }
       }
     }
@@ -1632,7 +1660,7 @@ persistence.get = function(arg1, arg2) {
       s += '|Order:';
       for(var i = 0; i < this._orderColumns.length; i++) {
         var col = this._orderColumns[i];
-        s += col[0] + ", " + col[1];
+        s += col[0] + ", " + col[1] + ", " + col[2];
       }
       s += '|Prefetch:';
       for(var i = 0; i < this._prefetchFields.length; i++) {
@@ -1719,12 +1747,16 @@ persistence.get = function(arg1, arg2) {
      * Returns a new query collection with an ordering imposed on the collection
      * @param property the property to sort on
      * @param ascending should the order be ascending (= true) or descending (= false)
+     * @param caseSensitive should the order be case sensitive (= true) or case insensitive (= false)
+     *        note: using case insensitive ordering for anything other than TEXT fields yields
+     *        undefinded behavior
      * @return the query collection with imposed ordering
      */
-    QueryCollection.prototype.order = function (property, ascending) {
+    QueryCollection.prototype.order = function (property, ascending, caseSensitive) {
       ascending = ascending === undefined ? true : ascending;
+      caseSensitive = caseSensitive === undefined ? true : caseSensitive;
       var c = this.clone();
-      c._orderColumns.push( [ property, ascending ]);
+      c._orderColumns.push( [ property, ascending, caseSensitive ]);
       return this._session.uniqueQueryCollection(c);
     };
 
@@ -2060,8 +2092,13 @@ persistence.get = function(arg1, arg2) {
           for(var i = 0; i < that._orderColumns.length; i++) {
             var col = that._orderColumns[i][0];
             var asc = that._orderColumns[i][1];
+            var sens = that._orderColumns[i][2];
             var aVal = persistence.get(a, col);
             var bVal = persistence.get(b, col);
+            if (!sens) {
+              aVal = aVal.toLowerCase();
+              bVal = bVal.toLowerCase();
+            }
             if(aVal < bVal) {
               return asc ? -1 : 1;
             } else if(aVal > bVal) {
@@ -2383,3 +2420,4 @@ if (!JSON.stringify) {
       }
     }());
 }
+
