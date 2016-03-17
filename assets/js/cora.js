@@ -2,17 +2,17 @@
  * CORA - Classroom Observation Recording Application
  * Copyright (C) 2012  POPFASD (Provincial Outreach Program for Fetal
  * Alcohol Spectrum Disorder)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * http://cora.fasdoutreach.ca/LICENSE.txt
  *
  * @author Matt Ferris <mferris@sd57.bc.ca>
@@ -23,7 +23,7 @@
  * Quiet all console.log messages
  */
 //console.log = function () {};
- 
+
 /*
  * Add trim to String for browsers that don't yet use EMCAScript5
  */
@@ -34,7 +34,7 @@ if (!String.prototype.trim)
 		return this.replace(/^\s+|\s+$/g, '');
 	}
 }
- 
+
 /**
  * Define the cora container object
  */
@@ -52,7 +52,7 @@ cora.Date = function ( string )
 	var date = new Date(string);
 	var months = [
 		'January', 'February', 'March', 'April', 'May', 'June',
-		'July', 'August', 'September', 'Octoboer', 'November', 'December'
+		'July', 'August', 'September', 'October', 'November', 'December'
 		];
 	var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 	var that = {};
@@ -297,7 +297,7 @@ cora.removeNote = cora.removeEntity;
 		});
 	}
  };
- 
+
 /**
  * Get an array of all notes
  * @param {function} callback Callback function
@@ -345,7 +345,7 @@ cora.removeTag = cora.removeEntity;
 		});
 	}
  };
- 
+
 /**
  * Get tag given a name
  * @param {string} name Name of the tag
@@ -452,7 +452,7 @@ cora.Exceptions = {
 cora.View = function (id, my) {
     my = my || {};
     var that = {};
-    
+
     var jq = $('#'+id);
     if (jq.length != 1)
     {
@@ -460,7 +460,7 @@ cora.View = function (id, my) {
     }
     my.view = $(jq.get(0));
     my.id = id;
-    
+
     that.data = function ( name, value ) {
         if (arguments.length == 1)
         {
@@ -484,7 +484,7 @@ cora.View = function (id, my) {
             return data;
         }
     };
-    
+
     that.clearData = function ( name ) {
         if (!name) {
             foreach (k in my.view.data())
@@ -501,7 +501,7 @@ cora.View = function (id, my) {
         }
         return that;
     };
-    
+
     that.getChild = function ( name ) {
         var jq = $('#'+id+'-'+name);
         if (jq.length != 1)
@@ -510,15 +510,15 @@ cora.View = function (id, my) {
         }
         return $(jq.get(0));
     };
-    
+
     that.getId = function () {
         return my.id;
     };
-    
+
     that.getSelector = function () {
         return '#'+my.id;
     };
-    
+
     that.find = function ( selector ) {
         if (selector.charAt(0) == '#')
         {
@@ -530,7 +530,7 @@ cora.View = function (id, my) {
             return my.view.find(selector);
         }
     };
-    
+
     return that;
 };
 
@@ -544,17 +544,17 @@ cora.PageView = function ( name, my ) {
     that.markDirty = function () {
         my.view.data('cora.clean', false);
     };
-    
+
     that.markClean = function () {
         my.view.data('cora.clean', true);
     };
-    
+
     that.isClean = function () {
         var clean = my.view.data('cora.clean');
         if (clean) return true;
         else return false;
     };
-    
+
     return that;
 };
 
@@ -564,12 +564,12 @@ cora.PageView = function ( name, my ) {
 cora.DialogView = function ( name, my ) {
     my = my || {};
     var that = cora.View('dialog-'+name, my);
-    
+
     that.close = function () {
         my.view.dialog('close');
         return that;
     };
-    
+
     return that;
 };
 
@@ -613,7 +613,7 @@ cora.showDialog = function ( dialog, options )
     options.transition = options.transition || 'pop';
     options.reverse = options.reverse || false;
     options.changeHash = options.changeHash || false;
-    
+
     var parts = [];
     for (k in options.params)
     {
@@ -653,7 +653,7 @@ cora.Controller = {
                 console.log('not redrawing #home, nothing changed');
                 return;
             }
-            
+
             cora.getAllStudents(function (students) {
                 /*
                  * Determine sort order of list
@@ -678,7 +678,7 @@ cora.Controller = {
                                 return 0;
                             }
                         });
-                    }				
+                    }
                 }
                 var html = '';
                 for (var i=0; i<students.length; i++)
@@ -890,7 +890,7 @@ cora.Controller = {
                                         var day = cd;
                                         var dd = d.getNoteDate();
                                         html += '<li data-role="list-divider">'+
-                                            d.getNoteDateAsString()+'</li>';											
+                                            d.getNoteDateAsString()+'</li>';
                                     }
                                     html += '<li><a href="#note?sid='+student.id+'&nid='+n.id+'">'+
                                         '<p class="note-time">'+d.getNoteTimeAsString()+'</p>'+
@@ -957,15 +957,15 @@ cora.Controller = {
             studentNameField.focusin(focusinfx);
             tagField.focusin(focusinfx);
             contentField.focusin(focusinfx);
-                 
+
             // bind to submit
             view.getChild('form').submit(cora.Controller.onSubmitNoteForm);
-            
+
             // Reset form fields
             contentField.val('');
             view.find('form :input').val('');
             view.find('form label').removeClass('form-validation-error');
-            
+
             // setup cancel button
             backButton.click(function () {
                 view.data('noteText', contentField.val())
@@ -1070,13 +1070,13 @@ cora.Controller = {
 
         // reset validation errors
 		view.find('form label').removeClass('form-validation-error');
-        
+
 		var noteId = view.getChild('note-id').val();
 		var studentId = view.getChild('student-id').val();
 		var formTags = view.getChild('tags').val();
 		var content = view.getChild('content').val();
-        
-		if ((noteId !== '' && content !== '') 
+
+		if ((noteId !== '' && content !== '')
 			|| (!noteId && studentId !== '' && content !== ''))
 		{
 			/*
@@ -1204,7 +1204,7 @@ cora.Controller = {
 									{
 										tag = cora.createTag(tname);
                                         manageTagsView.markDirty();
-										
+
 									}
 									note.tags.add(tag);
 								}
@@ -1231,7 +1231,7 @@ cora.Controller = {
 			{
 				view.getChid('content-label').addClass('form-validation-error');
 			}
-		}		
+		}
 		return false;
 	},
 	/**
@@ -1317,7 +1317,7 @@ cora.Controller = {
                     }
                     else
                     {
-                        cora.showDialog(objectDoesntExistDialog);			
+                        cora.showDialog(objectDoesntExistDialog);
                     }
                 });
             }
@@ -1484,7 +1484,7 @@ cora.Controller = {
 
             // bind to submit handler
             form.submit(cora.Controller.onSubmitShowManageTagsForm);
-            
+
             saveButton.click(function (e) {
                 e.preventDefault();
                 form.submit()
@@ -1592,7 +1592,7 @@ cora.Controller = {
                 tagSuggestionsList.hide();
             });
             // bind to submit
-            form.submit(function ( e ){       
+            form.submit(function ( e ){
                 var tags = tagsField.val();
                 tagsField.val('');
                 resultsView.data('tags', tags);
@@ -1683,7 +1683,7 @@ cora.Controller = {
                         );
                         studentNotesLists[note.student.id].listview('refresh');
                     }
-                });               
+                });
             }
             cora.redirect('#options-reports-results', {
                 reverse: false, changeHash: false
