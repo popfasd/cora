@@ -1,6 +1,6 @@
 #
 # CORA - Classroom Observation Recording Application
-# Copyright (C) 2012  POPFASD (Provincial Outreach Program for Fetal
+# Copyright (C) 2016  POPFASD (Provincial Outreach Program for Fetal
 # Alcohol Spectrum Disorder)
 # 
 # This program is free software: you can redistribute it and/or modify
@@ -15,16 +15,16 @@
 # 
 # http://fasdoutreach.ca/~cora/LICENSE.TXT
 #
-# Serial 2013021401
+# Serial 2016031801
 
 CACHE MANIFEST
 index.html
-assets/themes/jquery.mobile-1.2.0.min.css
+assets/themes/jquery.mobile-1.4.5.min.css
 assets/themes/cora.min.css
 assets/css/main.css
-assets/js/jquery-1.9.0.min.js
+assets/js/jquery-2.0.3.min.js
 assets/js/jquery.mobile.router.min.js
-assets/js/jquery.mobile-1.2.0.min.js
+assets/js/jquery.mobile-1.4.5.min.js
 assets/js/persistence.js
 assets/js/persistence.store.sql.js
 assets/js/persistence.store.websql.js
