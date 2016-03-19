@@ -1,6 +1,6 @@
 /**
  * CORA - Classroom Observation Recording Application
- * Copyright (C) 2012  POPFASD (Provincial Outreach Program for Fetal
+ * Copyright (C) 2016  POPFASD (Provincial Outreach Program for Fetal
  * Alcohol Spectrum Disorder)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * http://cora.fasdoutreach.ca/LICENSE.txt
  *
  * @author Matt Ferris <mferris@sd57.bc.ca>
- * @version 1.0
+ * @version 1.3
  */
 
 /*
